@@ -12,7 +12,6 @@ int __cdecl read_hook(int32_t handle, char* buffer, uint32_t size) {
   auto result = original(handle, buffer, size);
   // the game reserves lots and lots of space for this so we can safely add to the end
   strcat(buffer, "\r\n\r\n\r\n\r\nbrb");
-  printf("%s", buffer);
 
   return result;
 }

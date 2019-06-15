@@ -58,11 +58,11 @@ public:
 class BytesHook : public AutoHook {
 public:
   BytesHook() = default;
-  BytesHook(void* source_address, void* buffer, size_t length) {
+  BytesHook(void* source_address, const void* buffer, size_t length) {
     this->install(source_address, buffer, length);
   }
 
-  void install(void* source_address, void* buffer, size_t length) {
+  void install(void* source_address, const void* buffer, size_t length) {
     this->uninstall();
     this->hook_ = install_bytes(source_address, buffer, length);
   }
