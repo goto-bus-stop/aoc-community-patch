@@ -13,7 +13,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include/)
 
 add_definitions(-DWIN32_LEAN_AND_MEAN)
-add_compile_options(-static-libstdc++ -static-libgcc)
+add_link_options(-static-libstdc++ -static-libgcc)
 
 if(NOT MSVC)
   add_definitions(-Wall -Wsign-compare)
