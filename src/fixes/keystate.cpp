@@ -15,7 +15,7 @@ static std::vector<std::unique_ptr<BytesHook>> hooks;
 
 uint16_t WINAPI get_key_state(int32_t virt_key) {
   auto state = static_cast<uint16_t>(GetKeyState(virt_key));
-  dbg_print("get_key_state(%d) = %d -> %d\n", virt_key, state, state & 0x8001);
+  dbg_print("get_key_state(%d) = %x -> %x\n", virt_key, state, state & 0x8001);
   // Only the low-order and high-order bits are defined.
   return state & 0x8001;
 }
@@ -35,7 +35,7 @@ bool WINAPI get_keyboard_state(uint8_t* states) {
 
 uint16_t WINAPI get_async_key_state(int32_t virt_key) {
   auto state = static_cast<uint16_t>(GetAsyncKeyState(virt_key));
-  dbg_print("get_async_key_state(%d) = %d -> %d\n", virt_key, state,
+  dbg_print("get_async_key_state(%d) = %x -> %x\n", virt_key, state,
             state & 0x8001);
   // Only the low-order and high-order bits are defined.
   return state & 0x8001;
