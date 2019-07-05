@@ -1,6 +1,7 @@
+#include "features/brb.h"
+#include "features/hill_bonus.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
-#include "features/brb.h"
 #include <mmmod.h>
 #include <windows.h>
 
@@ -13,6 +14,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   KeyState::install();
   ScenEditMinimapPosition::install();
   BRB::install();
+  HillBonus::install();
 }
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}

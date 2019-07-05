@@ -22,9 +22,10 @@ endif()
 set(SOURCE_FILES
   src/main.cpp
   src/hook.c
-  src/fixes/scenedit_minimap_position.cpp
-  src/fixes/keystate.cpp
   src/features/brb.cpp
+  src/features/hill_bonus.cpp
+  src/fixes/keystate.cpp
+  src/fixes/scenedit_minimap_position.cpp
 )
 
 add_library(community-patch SHARED ${SOURCE_FILES})
