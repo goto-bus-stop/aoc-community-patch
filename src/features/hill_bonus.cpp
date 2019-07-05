@@ -1,41 +1,11 @@
 #include "hill_bonus.h"
 #include "../auto_hook.h"
-#include <cmath>
+#include "../game/player.h"
+#include "../game/unit.h"
 #include <cstdint>
-#include <cstdio>
 
 static const auto DOWNHILL_BONUS_ATTRIBUTE = 211u;
 static const auto UPHILL_BONUS_ATTRIBUTE = 212u;
-
-class Player {
-public:
-  inline float attribute(uint32_t index, float default_value = NAN) const {
-    auto num_attributes = *reinterpret_cast<uint32_t*>((size_t)this + 0xA4);
-    auto attributes = *reinterpret_cast<float**>((size_t)this + 0xA8);
-
-    if (index >= num_attributes)
-      return default_value;
-    return attributes[index];
-  }
-};
-
-class Unit {
-public:
-  inline Player* owner() const {
-    return *reinterpret_cast<Player**>((size_t)this + 0xC);
-  }
-  inline bool isHigherThan(Unit* other_unit) const {
-    auto original = (bool __thiscall (*)(const Unit*, Unit*))0x4C4990;
-    return original(this, other_unit);
-  }
-  inline float zPos() const {
-    return *reinterpret_cast<float*>((size_t)this + 0x40);
-  }
-  inline bool isCharging() const {
-    auto original = (bool __thiscall (*)(const Unit*))0x4C5F10;
-    return original(this);
-  }
-};
 
 static double __thiscall hook_hill_bonus(Unit* attacker, Unit* target) {
   float downhill_modifier = 1.25f;
