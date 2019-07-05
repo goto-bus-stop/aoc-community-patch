@@ -28,6 +28,13 @@ public:
     auto original = (bool __thiscall (*)(const Unit*, Unit*))0x4C4990;
     return original(this, other_unit);
   }
+  inline float zPos() const {
+    return *reinterpret_cast<float*>((size_t)this + 0x40);
+  }
+  inline bool isCharging() const {
+    auto original = (bool __thiscall (*)(const Unit*))0x4C5F10;
+    return original(this);
+  }
 };
 
 static double __thiscall hook_hill_bonus(Unit* attacker, Unit* target) {
@@ -38,25 +45,24 @@ static double __thiscall hook_hill_bonus(Unit* attacker, Unit* target) {
   auto downhill_bonus = player->attribute(DOWNHILL_BONUS_ATTRIBUTE, 0.0f);
   auto uphill_bonus = player->attribute(UPHILL_BONUS_ATTRIBUTE, 0.0f);
 
-  printf("hill bonus down = %f up = %f\n", downhill_bonus, uphill_bonus);
-
   auto original = (double __thiscall (*)(Unit*, Unit*))0x4C2A70;
 
   if (downhill_bonus == 0.0f && uphill_modifier == 0.0f) {
     return original(attacker, target);
   }
 
-  downhill_modifier += downhill_bonus;
-  uphill_modifier -= uphill_bonus;
+  auto modifier = 1.0f;
+  if (attacker->isHigherThan(target)) {
+    modifier = downhill_modifier + downhill_bonus;
+  } else if (attacker->zPos() < target->zPos()) {
+    modifier = uphill_modifier + uphill_bonus;
+  }
 
-  BytesHook downhill_hook((void*)0x4C2A92,
-                          reinterpret_cast<char*>(&downhill_modifier),
-                          sizeof(downhill_modifier));
-  BytesHook uphill_hook((void*)0x4C2AA9,
-                        reinterpret_cast<char*>(&uphill_modifier),
-                        sizeof(uphill_modifier));
+  if (attacker->isCharging()) {
+    modifier *= 2;
+  }
 
-  return original(attacker, target);
+  return modifier;
 }
 
 static VtblHook unit_hook_;
