@@ -40,6 +40,7 @@ set(SOURCE_FILES
   src/features/brb.cpp
   src/features/hill_bonus.cpp
   src/features/attribute_storage_mode.cpp
+  src/features/mercenaries.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
 )
