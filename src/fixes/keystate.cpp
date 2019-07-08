@@ -1,8 +1,6 @@
 #include "keystate.h"
 #include "../auto_hook.h"
 #include <cstdint>
-#include <memory>
-#include <vector>
 #include <windows.h>
 
 #ifdef NDEBUG
@@ -11,7 +9,9 @@
 #define dbg_print(...) printf("[community-patch] [keystate] " __VA_ARGS__)
 #endif
 
-static std::vector<std::unique_ptr<BytesHook>> hooks;
+static BytesHook key_state_hook_;
+static BytesHook keyboard_state_hook_;
+static BytesHook async_key_state_hook_;
 
 uint16_t WINAPI get_key_state(int32_t virt_key) {
   auto state = static_cast<uint16_t>(GetKeyState(virt_key));
@@ -50,9 +50,7 @@ void KeyState::install() {
   ptr_keyboard_state = (void*)get_keyboard_state;
   ptr_async_key_state = (void*)get_async_key_state;
 
-  hooks.emplace_back(new BytesHook((void*)0x63534C, (void*)&ptr_key_state, 4));
-  hooks.emplace_back(
-      new BytesHook((void*)0x635358, (void*)&ptr_keyboard_state, 4));
-  hooks.emplace_back(
-      new BytesHook((void*)0x635390, (void*)&ptr_async_key_state, 4));
+  key_state_hook_.install((void*)0x63534C, (void*)&ptr_key_state, 4);
+  keyboard_state_hook_.install((void*)0x635358, (void*)&ptr_keyboard_state, 4);
+  async_key_state_hook_.install((void*)0x635390, (void*)&ptr_async_key_state, 4);
 }

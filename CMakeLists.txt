@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.9)
 
 project(community-patch)
 
@@ -12,10 +12,20 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include/)
 
+if (NOT CMAKE_BUILD_TYPE EQUAL DEBUG)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT ENABLE_LTO OUTPUT error)
+  if (NOT MSVC)
+    add_link_options(-s)
+  endif()
+endif()
+
 add_definitions(-DWIN32_LEAN_AND_MEAN)
-add_link_options(-static-libstdc++ -static-libgcc)
 
 if(NOT MSVC)
+  add_compile_options(-fno-rtti -fno-exceptions)
+  add_link_options(-Wl,--exclude-all-symbols)
+  add_link_options(-static-libstdc++ -static-libgcc)
   add_definitions(-Wall -Wsign-compare)
 endif()
 
@@ -32,6 +42,10 @@ add_library(community-patch SHARED ${SOURCE_FILES})
 set_target_properties(community-patch PROPERTIES
     PREFIX ""
     SUFFIX ".dll")
+if(ENABLE_LTO)
+  message(STATUS "Building with link time optimization")
+  set_property(TARGET community-patch PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 target_link_libraries(community-patch)
 install(TARGETS community-patch
         LIBRARY DESTINATION lib)
