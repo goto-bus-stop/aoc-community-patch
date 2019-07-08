@@ -31,7 +31,7 @@ endif()
 
 set(SOURCE_FILES
   src/main.cpp
-  src/hook.c
+  src/auto_hook.cpp
   src/features/brb.cpp
   src/features/hill_bonus.cpp
   src/fixes/keystate.cpp

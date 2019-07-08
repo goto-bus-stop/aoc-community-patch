@@ -1,17 +1,34 @@
 #pragma once
-#include "hook.h"
+#include <array>
+#include <cstdint>
+#include <cstring>
+#include <cstdlib>
 
 class AutoHook {
 protected:
-  hook_t hook_ = nullptr;
+  void* ptr_ = nullptr;
+  size_t orig_size_ = 0;
+  union {
+    void* big_orig_data_;
+    std::array<uint8_t, 12> small_orig_data_;
+  };
+
+  void write_bytes(void* at, const uint8_t* patch, size_t size);
 
 public:
   virtual ~AutoHook() { this->uninstall(); }
 
   void uninstall() {
-    if (this->hook_ != nullptr) {
-      revert_hook(this->hook_);
-      this->hook_ = nullptr;
+    if (this->ptr_ != nullptr) {
+      if (this->orig_size_ > 12) {
+        memcpy(this->ptr_, this->big_orig_data_, this->orig_size_);
+        free(this->big_orig_data_);
+      } else {
+        memcpy(this->ptr_, this->small_orig_data_.data(), this->orig_size_);
+      }
+      this->ptr_ = nullptr;
+      this->orig_size_ = 0;
+      this->small_orig_data_.fill(0);
     }
   }
 };
@@ -25,7 +42,10 @@ public:
 
   void install(void* source_address, void* target_address) {
     this->uninstall();
-    this->hook_ = install_jmphook(source_address, target_address);
+    std::array<uint8_t, 5> bytes = {0xE9, 0, 0, 0, 0};
+    int32_t offset = reinterpret_cast<int32_t>(target_address) - reinterpret_cast<int32_t>(source_address) + 5;
+    memcpy(&bytes[1], &offset, sizeof(offset));
+    this->write_bytes(source_address, bytes.data(), bytes.size());
   }
 };
 
@@ -38,7 +58,10 @@ public:
 
   void install(void* source_address, void* target_address) {
     this->uninstall();
-    this->hook_ = install_callhook(source_address, target_address);
+    std::array<uint8_t, 5> bytes = {0xE8, 0, 0, 0, 0};
+    int32_t offset = reinterpret_cast<int32_t>(target_address) - reinterpret_cast<int32_t>(source_address) + 5;
+    memcpy(&bytes[1], &offset, sizeof(offset));
+    this->write_bytes(source_address, bytes.data(), bytes.size());
   }
 };
 
@@ -51,7 +74,7 @@ public:
 
   void install(void* source_address, void* target_address) {
     this->uninstall();
-    this->hook_ = install_vtblhook(source_address, target_address);
+    this->write_bytes(source_address, reinterpret_cast<const uint8_t*>(&target_address), 4);
   }
 };
 
@@ -64,6 +87,6 @@ public:
 
   void install(void* source_address, const void* buffer, size_t length) {
     this->uninstall();
-    this->hook_ = install_bytes(source_address, buffer, length);
+    this->write_bytes(source_address, reinterpret_cast<const uint8_t*>(buffer), length);
   }
 };
