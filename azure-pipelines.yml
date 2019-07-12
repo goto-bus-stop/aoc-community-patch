@@ -16,11 +16,11 @@ steps:
 - task: CMake@1
   inputs:
     workingDirectory: build-debug
-    cmakeArgs: '-DCMAKE_BUILD_TYPE=Debug'
+    cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Debug'
   displayName: 'Run CMake debug build'
 
 - task: CMake@1
   inputs:
     workingDirectory: build-release
-    cmakeArgs: '-DCMAKE_BUILD_TYPE=Release'
+    cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release'
   displayName: 'Run CMake release build'
