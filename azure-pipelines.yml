@@ -1,0 +1,21 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug
+  displayName: 'Prepare CMake debug config'
+- script: cmake --build build-debug
+  displayName: 'Run CMake debug build'
+
+- script: cmake -B build-release -DCMAKE_BUILD_TYPE=Release
+  displayName: 'Prepare CMake release config'
+- script: cmake --build build-release
+  displayName: 'Run CMake release build'
