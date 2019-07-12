@@ -10,12 +10,17 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: cmake -B build-debug -DCMAKE_BUILD_TYPE=Debug
-  displayName: 'Prepare CMake debug config'
-- script: cmake --build build-debug
+- checkout: self
+  submodules: recursive
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-debug
+    cmakeArgs: '-DCMAKE_BUILD_TYPE=Debug'
   displayName: 'Run CMake debug build'
 
-- script: cmake -B build-release -DCMAKE_BUILD_TYPE=Release
-  displayName: 'Prepare CMake release config'
-- script: cmake --build build-release
+- task: CMake@1
+  inputs:
+    workingDirectory: build-release
+    cmakeArgs: '-DCMAKE_BUILD_TYPE=Release'
   displayName: 'Run CMake release build'
