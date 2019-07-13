@@ -10,7 +10,7 @@ inline auto getMethod(size_t address) {
 #ifdef _MSVC_VER
   auto fn = reinterpret_cast<ReturnType (__fastcall*)(ThisArg, void*, Args...)>(address);
   return [fn](ThisArg self, Args... args) -> ReturnType {
-    return fn(self, nullptr, std::forward<Args...>(args));
+    return fn(self, nullptr, std::forward<Args>(args)...);
   };
 #else
   auto fn = reinterpret_cast<ReturnType __thiscall(*)(ThisArg, Args...)>(address);
