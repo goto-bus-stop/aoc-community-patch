@@ -1,5 +1,6 @@
 #include "hill_bonus.h"
 #include "../auto_hook.h"
+#include "../call_conventions.h"
 #include "../game/player.h"
 #include "../game/unit.h"
 #include <cstdint>
@@ -7,7 +8,7 @@
 static const auto DOWNHILL_BONUS_ATTRIBUTE = 211u;
 static const auto UPHILL_BONUS_ATTRIBUTE = 212u;
 
-static double __thiscall hook_hill_bonus(Unit* attacker, Unit* target) {
+static double THISCALL(hook_hill_bonus, Unit* attacker, Unit* target) {
   float downhill_modifier = 1.25f;
   float uphill_modifier = 0.75f;
 
@@ -15,7 +16,7 @@ static double __thiscall hook_hill_bonus(Unit* attacker, Unit* target) {
   auto downhill_bonus = player->attribute(DOWNHILL_BONUS_ATTRIBUTE, 0.0f);
   auto uphill_bonus = player->attribute(UPHILL_BONUS_ATTRIBUTE, 0.0f);
 
-  auto original = (double __thiscall (*)(Unit*, Unit*))0x4C2A70;
+  auto original = getMethod<double, Unit*, Unit*>(0x4C2A70);
 
   if (downhill_bonus == 0.0f && uphill_modifier == 0.0f) {
     return original(attacker, target);

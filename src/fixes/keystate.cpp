@@ -52,5 +52,6 @@ void KeyState::install() {
 
   key_state_hook_.install((void*)0x63534C, (void*)&ptr_key_state, 4);
   keyboard_state_hook_.install((void*)0x635358, (void*)&ptr_keyboard_state, 4);
-  async_key_state_hook_.install((void*)0x635390, (void*)&ptr_async_key_state, 4);
+  async_key_state_hook_.install((void*)0x635390, (void*)&ptr_async_key_state,
+                                4);
 }

@@ -1,0 +1,51 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- default
+
+pool:
+  vmImage: 'vs2017-win2016'
+
+steps:
+- checkout: self
+  submodules: recursive
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-debug
+    cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Debug'
+  displayName: 'Prepare CMake debug build'
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-release
+    cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release'
+  displayName: 'Prepare CMake release build'
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-debug
+    cmakeArgs: '--build . --config debug'
+  displayName: 'Run CMake debug build'
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-release
+    cmakeArgs: '--build . --config release'
+  displayName: 'Run CMake release build'
+
+- bash: |
+    mkdir artifact-debug artifact-release
+    cp build-debug/Debug/community-patch.dll artifact-debug
+    cp build-release/release/community-patch.dll artifact-release
+    cp -R docs artifact-debug
+    cp -R docs artifact-release
+  displayName: 'Prepare artifacts'
+
+- publish: artifact-debug
+  artifact: Community Patch (Debug)
+- publish: artifact-release
+  artifact: Community Patch (Release)
