@@ -36,3 +36,8 @@ steps:
     workingDirectory: build-release
     cmakeArgs: '--build . --config release'
   displayName: 'Run CMake release build'
+
+- publish: build-debug/Debug/community-patch.dll
+  artifact: Community Patch (Debug)
+- publish: build-release/Release/community-patch.dll
+  artifact: Community Patch (Release)
