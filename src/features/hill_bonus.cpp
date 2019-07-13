@@ -16,7 +16,7 @@ static double THISCALL(hook_hill_bonus, Unit* attacker, Unit* target) {
   auto downhill_bonus = player->attribute(DOWNHILL_BONUS_ATTRIBUTE, 0.0f);
   auto uphill_bonus = player->attribute(UPHILL_BONUS_ATTRIBUTE, 0.0f);
 
-  auto original = THISCALL_PTR(double, Unit*, Unit*) 0x4C2A70;
+  auto original = getMethod<double, Unit*, Unit*>(0x4C2A70);
 
   if (downhill_bonus == 0.0f && uphill_modifier == 0.0f) {
     return original(attacker, target);
