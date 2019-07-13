@@ -28,11 +28,11 @@ steps:
 - task: CMake@1
   inputs:
     workingDirectory: build-debug
-    cmakeArgs: '--build .'
+    cmakeArgs: '--build . --config debug'
   displayName: 'Run CMake debug build'
 
 - task: CMake@1
   inputs:
     workingDirectory: build-release
-    cmakeArgs: '--build .'
+    cmakeArgs: '--build . --config release'
   displayName: 'Run CMake release build'
