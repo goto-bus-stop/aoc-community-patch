@@ -1,8 +1,8 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include <cstring>
 #include <cstdlib>
+#include <cstring>
 
 class AutoHook {
 protected:
@@ -43,7 +43,8 @@ public:
   void install(void* source_address, void* target_address) {
     this->uninstall();
     std::array<uint8_t, 5> bytes = {0xE9, 0, 0, 0, 0};
-    int32_t offset = reinterpret_cast<int32_t>(target_address) - reinterpret_cast<int32_t>(source_address) + 5;
+    int32_t offset = reinterpret_cast<int32_t>(target_address) -
+                     reinterpret_cast<int32_t>(source_address) + 5;
     memcpy(&bytes[1], &offset, sizeof(offset));
     this->write_bytes(source_address, bytes.data(), bytes.size());
   }
@@ -59,7 +60,8 @@ public:
   void install(void* source_address, void* target_address) {
     this->uninstall();
     std::array<uint8_t, 5> bytes = {0xE8, 0, 0, 0, 0};
-    int32_t offset = reinterpret_cast<int32_t>(target_address) - reinterpret_cast<int32_t>(source_address) + 5;
+    int32_t offset = reinterpret_cast<int32_t>(target_address) -
+                     reinterpret_cast<int32_t>(source_address) + 5;
     memcpy(&bytes[1], &offset, sizeof(offset));
     this->write_bytes(source_address, bytes.data(), bytes.size());
   }
@@ -74,7 +76,8 @@ public:
 
   void install(void* source_address, void* target_address) {
     this->uninstall();
-    this->write_bytes(source_address, reinterpret_cast<const uint8_t*>(&target_address), 4);
+    this->write_bytes(source_address,
+                      reinterpret_cast<const uint8_t*>(&target_address), 4);
   }
 };
 
@@ -87,6 +90,7 @@ public:
 
   void install(void* source_address, const void* buffer, size_t length) {
     this->uninstall();
-    this->write_bytes(source_address, reinterpret_cast<const uint8_t*>(buffer), length);
+    this->write_bytes(source_address, reinterpret_cast<const uint8_t*>(buffer),
+                      length);
   }
 };
