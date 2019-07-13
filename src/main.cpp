@@ -19,7 +19,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}
 
-WINAPI BOOL DllMain(HINSTANCE module, DWORD reason, void*) {
+BOOL WINAPI DllMain(HINSTANCE module, DWORD reason, void*) {
   if (reason == 1) {
     DisableThreadLibraryCalls(module);
   }
