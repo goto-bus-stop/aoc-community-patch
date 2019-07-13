@@ -3,11 +3,10 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include "call_conventions.h"
 
 template<typename ReturnType, typename ThisArg, typename ...Args>
 inline auto getMethod(size_t address) {
-#ifdef _MSVC_VER
+#ifdef _MSC_VER
   auto fn = reinterpret_cast<ReturnType (__fastcall*)(ThisArg, void*, Args...)>(address);
   return [fn](ThisArg self, Args... args) -> ReturnType {
     return fn(self, nullptr, std::forward<Args>(args)...);
