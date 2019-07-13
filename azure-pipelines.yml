@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- default
 
 pool:
   vmImage: 'vs2017-win2016'
@@ -17,10 +17,22 @@ steps:
   inputs:
     workingDirectory: build-debug
     cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Debug'
-  displayName: 'Run CMake debug build'
+  displayName: 'Prepare CMake debug build'
 
 - task: CMake@1
   inputs:
     workingDirectory: build-release
     cmakeArgs: '.. -DCMAKE_BUILD_TYPE=Release'
+  displayName: 'Prepare CMake release build'
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-debug
+    cmakeArgs: '--build .'
+  displayName: 'Run CMake debug build'
+
+- task: CMake@1
+  inputs:
+    workingDirectory: build-release
+    cmakeArgs: '--build .'
   displayName: 'Run CMake release build'
