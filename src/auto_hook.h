@@ -12,7 +12,10 @@ inline auto getMethod(size_t address) {
     return fn(self, nullptr, std::forward<Args>(args)...);
   };
 #else
-  auto fn = reinterpret_cast<ReturnType __thiscall(*)(ThisArg, Args...)>(address);
+  // Simply doing `auto fn = reinterpret_cast<>(address)` loses the __thiscall declaration,
+  // so we have to trick GCC into accepting it.
+  ReturnType __thiscall (*fn)(ThisArg, Args...) = nullptr;
+  fn = reinterpret_cast<decltype(fn)>(address);
   return fn;
 #endif
 }
