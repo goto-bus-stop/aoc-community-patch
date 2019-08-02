@@ -1,6 +1,6 @@
+#include "features/attribute_storage_mode.h"
 #include "features/brb.h"
 #include "features/hill_bonus.h"
-#include "features/attribute_storage_mode.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
 #include <mmmod.h>

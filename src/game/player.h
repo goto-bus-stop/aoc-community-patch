@@ -20,7 +20,8 @@ public:
 
   /// Add (+) a value to the given player attribute.
   ///
-  /// Set earned = true to make this addition count towards total resource collection achievements.
+  /// Set earned = true to make this addition count towards total resource
+  /// collection achievements.
   inline void addAttribute(Attribute attr, float value, bool earned = false) {
     auto original = getMethod<void, Player*, int16_t, float, bool>(0x45A990);
     original(this, static_cast<int16_t>(attr), value, earned);
