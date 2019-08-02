@@ -43,8 +43,8 @@ public:
   /// give or take resources from the player.
   UnitAttributes attributes() const {
     return UnitAttributes(reinterpret_cast<AttributeMode*>((size_t)this + 0x90),
-                          reinterpret_cast<Attribute*>((size_t) + 0x72),
-                          reinterpret_cast<float*>((size_t) + 0x78));
+                          reinterpret_cast<Attribute*>((size_t)this + 0x72),
+                          reinterpret_cast<float*>((size_t)this + 0x78));
   }
 };
 
