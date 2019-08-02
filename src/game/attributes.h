@@ -230,6 +230,16 @@ enum class Attribute : int16_t {
   DownHillBonus = 211,
   /// Community Patch addition.
   UpHillBonus = 212,
+  /// Community Patch addition.
+  RaidingProductivity = 213,
+  /// Community Patch addition.
+  MercenaryKipchakCount = 214,
+  /// Community Patch addition.
+  MercenaryKipchakLimit = 215,
+  /// Community Patch addition.
+  ShepherdProductivity = 216,
+  /// Community Patch addition.
+  SharedLineOfSight = 217,
 };
 
 /// Defines the way an attribute works.
