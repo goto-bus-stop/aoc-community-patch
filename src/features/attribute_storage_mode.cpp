@@ -1,19 +1,18 @@
 #include "attribute_storage_mode.h"
+#include "../game/attributes.h"
 #include "../game/unit.h"
 #include "../game/player.h"
 #include "../auto_hook.h"
 #include "../call_conventions.h"
 #include <cstdint>
 
-static const auto LATE_ATTR_FLAG = 16;
-
 void take_late_attribute_from_owner(Unit* unit) {
   auto attributes = unit->type()->attributes();
   for (auto i = 0; i < 3; i++) {
-    if (attributes.flag(i) == LATE_ATTR_FLAG) {
+    if (attributes.mode(i) == AttributeMode::GiveAndTakeLate) {
       auto t = attributes.type(i);
       auto amount = attributes.amount(i);
-      if (t >= 0) {
+      if (static_cast<int32_t>(t) >= 0) {
         unit->owner()->addAttribute(t, -amount);
       }
     }
