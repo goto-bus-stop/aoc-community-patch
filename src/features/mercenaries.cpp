@@ -8,8 +8,7 @@ static const int16_t DisableKipchakTech = 708;
 
 void __thiscall hook_add_attribute(Player* player, int16_t attribute_id,
                                    float value, int32_t flag) {
-  auto original =
-      (void __thiscall (*)(Player*, int16_t, float, int32_t))0x45A990;
+  auto original = getMethod<void, Player*, int16_t, float, int32_t>(0x45A990);
   original(player, attribute_id, value, flag);
 
   // When MercenaryKipchakCount reaches 0, trigger DisableKipchakTech
