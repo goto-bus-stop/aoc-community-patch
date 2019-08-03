@@ -39,7 +39,7 @@ public:
   /// Trigger a tech.
   inline void triggerTech(int16_t tech_id) {
     auto techs = *reinterpret_cast<void**>((size_t)this + 0x12A0);
-    auto original = (void __thiscall (*)(void*, int16_t))0x40244D;
+    auto original = getMethod<void, void*, int16_t>(0x40244D);
     original(techs, tech_id);
   }
 };
