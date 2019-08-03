@@ -1,12 +1,13 @@
 #include "mercenaries.h"
 #include "../auto_hook.h"
+#include "../call_conventions.h"
 #include "../game/attributes.h"
 #include "../game/player.h"
 #include <cstdint>
 
 static const int16_t DisableKipchakTech = 708;
 
-void __thiscall hook_add_attribute(Player* player, int16_t attribute_id,
+void THISCALL(hook_add_attribute, Player* player, int16_t attribute_id,
                                    float value, int32_t flag) {
   auto original = getMethod<void, Player*, int16_t, float, int32_t>(0x45A990);
   original(player, attribute_id, value, flag);
