@@ -4,16 +4,17 @@
 #include <cstdlib>
 #include <cstring>
 
-template<typename ReturnType, typename ThisArg, typename ...Args>
+template <typename ReturnType, typename ThisArg, typename... Args>
 inline auto getMethod(size_t address) {
 #ifdef _MSC_VER
-  auto fn = reinterpret_cast<ReturnType (__fastcall*)(ThisArg, void*, Args...)>(address);
+  auto fn = reinterpret_cast<ReturnType(__fastcall*)(ThisArg, void*, Args...)>(
+      address);
   return [fn](ThisArg self, Args... args) -> ReturnType {
     return fn(self, nullptr, std::forward<Args>(args)...);
   };
 #else
-  // Simply doing `auto fn = reinterpret_cast<>(address)` loses the __thiscall declaration,
-  // so we have to trick GCC into accepting it.
+  // Simply doing `auto fn = reinterpret_cast<>(address)` loses the __thiscall
+  // declaration, so we have to trick GCC into accepting it.
   ReturnType __thiscall (*fn)(ThisArg, Args...) = nullptr;
   fn = reinterpret_cast<decltype(fn)>(address);
   return fn;

@@ -1,3 +1,4 @@
+#include "features/attribute_storage_mode.h"
 #include "features/brb.h"
 #include "features/hill_bonus.h"
 #include "fixes/keystate.h"
@@ -15,6 +16,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   ScenEditMinimapPosition::install();
   BRB::install();
   HillBonus::install();
+  AttributeStorageMode::install();
 }
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}
