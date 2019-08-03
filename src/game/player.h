@@ -6,8 +6,8 @@
 class Player {
 public:
   /// Get the number of attributes this player has.
-  inline uint32_t numAttributes() const {
-    return *reinterpret_cast<uint32_t*>((size_t)this + 0xA4);
+  inline int32_t numAttributes() const {
+    return *reinterpret_cast<int32_t*>((size_t)this + 0xA4);
   }
 
   /// Get the list of attributes this player has.
