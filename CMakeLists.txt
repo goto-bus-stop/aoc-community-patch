@@ -40,6 +40,7 @@ set(SOURCE_FILES
   src/features/brb.cpp
   src/features/hill_bonus.cpp
   src/features/attribute_storage_mode.cpp
+  src/features/unicode.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
 )
@@ -52,6 +53,6 @@ if(ENABLE_LTO)
   message(STATUS "Building with link time optimization")
   set_property(TARGET community-patch PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
-target_link_libraries(community-patch)
+target_link_libraries(community-patch gdi32)
 install(TARGETS community-patch
         LIBRARY DESTINATION lib)
