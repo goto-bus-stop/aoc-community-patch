@@ -18,8 +18,8 @@ public:
   /// Get a player attribute.
   ///
   /// Returns default value if the player does not have the given attribute.
-  inline float attribute(Attribute attr., float default_value = NAN) const {
-    auto index = static_cast<int32_t>(attr.);
+  inline float attribute(Attribute attr, float default_value = NAN) const {
+    auto index = static_cast<int32_t>(attr);
     if (index < 0 || index >= this->numAttributes())
       return default_value;
 
