@@ -4,8 +4,7 @@
 #include "../game/player.h"
 #include <cstdint>
 
-// TODO use the correct ID
-static const int16_t DisableKipchakTech = 1280;
+static const int16_t DisableKipchakTech = 708;
 
 void __thiscall hook_add_attribute(Player* player, int16_t attribute_id,
                                    float value, int32_t flag) {

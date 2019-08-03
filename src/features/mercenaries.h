@@ -6,9 +6,9 @@
  * Player attribute 214 contains the number of mercenaries that can be made.
  * Player attribute 215 contains the number of mercenaries that have been made.
  *
- * When 214 reaches 0, tech 1280 is triggered.
+ * When 214 reaches 0, tech 708 is triggered.
  *
- * The data files can specify that 1280 should disable the mercenary training
+ * The data files can specify that 708 should disable the mercenary training
  * button for that player.
  */
 
