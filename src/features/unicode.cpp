@@ -21,15 +21,6 @@ int WINAPI utf8_load_string(HINSTANCE hInstance, UINT uID, char* str_out, int cc
     if (cchBufferMax > utf8_len) str_out[utf8_len] = '\0';
   }
 
-  if (strcmp(str_out, "HY목판B") == 0 || strcmp(str_out, "HY목판M") == 0) {
-    strcpy(str_out, "Baekmuk Batang");
-    utf8_len = strlen(str_out);
-  }
-  if (strcmp(str_out, "굴림") == 0) {
-    strcpy(str_out, "Baekmuk Gulim");
-    utf8_len = strlen(str_out);
-  }
-
   return utf8_len;
 }
 
