@@ -13,7 +13,6 @@ int CDECL(read_hook, int32_t handle, char* buffer, uint32_t size) {
   auto result = original(handle, buffer, size);
   // the game reserves lots and lots of space for this so we can safely add to
   // the end
-  auto buffer_size = (size + 1) * 0x400;
   strcat(buffer, "\r\n\r\n\r\n\r\nbrb");
 
   return result;
