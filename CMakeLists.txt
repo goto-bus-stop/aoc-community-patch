@@ -23,7 +23,8 @@ if (IS_RELEASE)
   endif()
 endif()
 
-add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_compile_definitions(WINVER=0x0501)
+add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
 if(NOT MSVC)
   add_compile_options(-fno-exceptions)
