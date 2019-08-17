@@ -19,6 +19,8 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   KeyState::install();
   SCXModIdentifier::install();
   ScenEditMinimapPosition::install();
+
+  FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
 }
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}
