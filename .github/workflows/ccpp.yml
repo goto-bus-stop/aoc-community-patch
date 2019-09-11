@@ -14,5 +14,5 @@ jobs:
       run: cmake --build build
     - uses: actions/upload-artifact@master
       with:
-        name: community-patch.dll
-        path: build/community-patch.dll
+        name: community-patch
+        path: build/Debug
