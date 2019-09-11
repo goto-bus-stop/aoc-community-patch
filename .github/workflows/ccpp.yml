@@ -1,0 +1,15 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: cmake prepare debug
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug
+    - name: cmake build debug
+      run: cmake -B build --build
