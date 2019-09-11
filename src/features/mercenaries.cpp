@@ -40,10 +40,10 @@ void THISCALL(hook_add_attribute, Player* player, int16_t attribute_id,
   }
 }
 
-int8_t THISCALL(hook_pay_unit_price, size_t player, int16_t unit_id, float modifier, int32_t ignore_pop) {
-  printf("hook_pay_unit_price(%x, %d, %f, %d)\n", player, unit_id, modifier, ignore_pop);
+int8_t THISCALL(hook_pay_unit_price, Player* player, int16_t unit_id, float modifier, int32_t ignore_pop) {
+  printf("hook_pay_unit_price(%p, %d, %f, %d)\n", player, unit_id, modifier, ignore_pop);
   fflush(stdout);
-  auto original = getMethod<int32_t, size_t, int16_t, float, int32_t>(0x457E40);
+  auto original = getMethod<int32_t, Player*, int16_t, float, int32_t>(0x457E40);
   auto result = original(player, unit_id, modifier, ignore_pop);
   if (result) {
     check_kipchak(player);
