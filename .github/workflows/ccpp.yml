@@ -12,3 +12,7 @@ jobs:
       run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug
     - name: Build debug DLL
       run: cmake --build
+    - uses: actions/upload-artifact@master
+      with:
+        name: community-patch.dll
+        path: build/community-patch.dll
