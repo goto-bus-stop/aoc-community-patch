@@ -3,7 +3,7 @@ name: Build Community Patch
 on: [push]
 
 jobs:
-  build:
+  debug:
     runs-on: windows-latest
 
     steps:
@@ -14,5 +14,18 @@ jobs:
       run: cmake --build build
     - uses: actions/upload-artifact@master
       with:
-        name: community-patch
+        name: community-patch-debug
         path: build/Debug
+  release:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Prepare release DLL
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+    - name: Build release DLL
+      run: cmake --build build
+    - uses: actions/upload-artifact@master
+      with:
+        name: community-patch-release
+        path: build/Release
