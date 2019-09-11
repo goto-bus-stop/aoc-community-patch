@@ -16,7 +16,7 @@ jobs:
       run: mkdir -p artifact && cp build/Debug/* artifact && cp -R docs/ artifact
     - uses: actions/upload-artifact@master
       with:
-        name: community-patch
+        name: community-patch-debug
         path: artifact
   release:
     runs-on: windows-latest
@@ -31,5 +31,5 @@ jobs:
       run: mkdir -p artifact && cp build/Debug/community-patch.dll artifact && cp -R docs/ artifact
     - uses: actions/upload-artifact@master
       with:
-        name: community-patch
+        name: community-patch-release
         path: artifact
