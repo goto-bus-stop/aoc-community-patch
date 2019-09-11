@@ -1,15 +1,14 @@
-name: C/C++ CI
+name: Build Community Patch
 
 on: [push]
 
 jobs:
   build:
-
     runs-on: windows-latest
-    
+
     steps:
     - uses: actions/checkout@v1
-    - name: cmake prepare debug
+    - name: Prepare debug DLL
       run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug
-    - name: cmake build debug
-      run: cmake -B build --build
+    - name: Build debug DLL
+      run: cmake --build
