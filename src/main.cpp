@@ -2,6 +2,7 @@
 #include "features/brb.h"
 #include "features/hill_bonus.h"
 #include "features/mercenaries.h"
+#include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
 #include <mmmod.h>
@@ -18,10 +19,13 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   ScenEditMinimapPosition::install();
 
   // Features
+  AttributeStorageMode::install();
   BRB::install();
   HillBonus::install();
-  AttributeStorageMode::install();
   Mercenaries::install();
+  SCXModIdentifier::install();
+
+  FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
 }
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}

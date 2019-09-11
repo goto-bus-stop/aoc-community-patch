@@ -38,10 +38,11 @@ endif()
 set(SOURCE_FILES
   src/main.cpp
   src/auto_hook.cpp
+  src/features/attribute_storage_mode.cpp
   src/features/brb.cpp
   src/features/hill_bonus.cpp
-  src/features/attribute_storage_mode.cpp
   src/features/mercenaries.cpp
+  src/features/scx_mod_identifier.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
 )
