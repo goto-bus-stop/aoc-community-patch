@@ -1,7 +1,7 @@
 #pragma once
+#include <cstring>
 #include <string>
 #include <vector>
-#include <cstring>
 
 struct UserPatchCiv {
   int32_t id;
@@ -18,9 +18,14 @@ struct UserPatchCiv {
 
 class UserPatch {
 public:
-  inline size_t numCivs() const { return *(int32_t*)0x7A5080;; }
+  inline size_t numCivs() const {
+    return *(int32_t*)0x7A5080;
+    ;
+  }
   inline const UserPatchCiv* civs() const { return *(UserPatchCiv**)0x7A5090; }
-  inline bool isModded() const { return strncmp(this->modShortName(), "age2_x1", 7) != 0; }
+  inline bool isModded() const {
+    return strncmp(this->modShortName(), "age2_x1", 7) != 0;
+  }
   inline char* modName() const { return *(char**)0x7A5078; }
   inline char* modShortName() const { return *(char**)0x7A5058; }
 };

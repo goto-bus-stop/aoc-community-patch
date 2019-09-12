@@ -1,7 +1,11 @@
 #pragma once
+#include "../auto_hook.h"
 #include "attributes.h"
 #include <cmath>
 #include <cstdint>
+
+/// Include "unit.h" to use this class's methods.
+class UnitType;
 
 class Player {
 public:
@@ -41,5 +45,11 @@ public:
     auto techs = *reinterpret_cast<void**>((size_t)this + 0x12A0);
     auto original = getMethod<void, void*, int16_t>(0x40244D);
     original(techs, tech_id);
+  }
+
+  /// Get a unit type that can be created by this player.
+  inline UnitType* unitType(int16_t type_id) const {
+    return *reinterpret_cast<UnitType**>((size_t)this + 0x74 +
+                                         type_id * sizeof(UnitType*));
   }
 };
