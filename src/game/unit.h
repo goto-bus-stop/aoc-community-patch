@@ -25,6 +25,17 @@ public:
   inline float amount(int32_t index) { return this->amount_[index]; }
 };
 
+// The bits in the Hide In Editor value are, low to high:
+// - Hidden in scenario editor
+// - Queueable tech
+struct HideEditorFlags {
+public:
+  uint8_t value;
+
+  inline bool hideInEditor() const { return (value & 1) == 1; }
+  inline bool queueableTech() const { return (value & 2) == 2; }
+};
+
 class UnitType {
 public:
   /// Get the unit class of this unit type.
@@ -47,13 +58,15 @@ public:
                           reinterpret_cast<float*>((size_t)this + 0x78));
   }
 
+  inline HideEditorFlags newFlags() const {
+    return HideEditorFlags{
+      *reinterpret_cast<uint8_t*>((size_t)this + 0x56)
+    };
+  }
+
   /// Check if this unit has the "queueable tech" flag set.
   inline bool isQueueableTech() const {
-    // The bits in `flags` are, low to high:
-    // - Hidden in scenario editor
-    // - Queueable tech
-    auto flags = *reinterpret_cast<uint8_t*>((size_t)this + 0x52);
-    return (flags & 2) == 2;
+    return this->newFlags().queueableTech();
   }
 };
 

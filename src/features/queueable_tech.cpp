@@ -4,16 +4,28 @@
 #include "../game/attributes.h"
 #include "../game/player.h"
 #include "../game/unit.h"
-#include <cmath> // NAN
 #include <cstdint>
+#include <cstdio>
 
 /// Bypass pop cap by pretending that queueable tech units have an invalid pop
 /// value.
+///
+/// This function is called in _one_ place, while the unit is entering the first
+/// spot in a building's production queue. At that point, the population is checked in two ways:
+///
+/// if (CurrentPop + TrainingUnits + NewUnitPopCount > PopCap)
+///   disallow;
+/// if (Headroom - TrainingUnits - NewUnitPopCount < 0)
+///   disallow;
+/// start_producing_unit;
+///
+/// By returning a very large negative number, we can make sure both conditions fail,
+/// and the unit production is allowed.
 static double THISCALL(get_unit_pop_count, Player* player, int16_t type_id) {
   auto original = getMethod<double, Player*, int16_t>(0x45E360);
   auto unit_type = player->unitType(type_id);
-  if (unit_type->isQueueableTech()) {
-    return NAN;
+  if (unit_type != nullptr && unit_type->isQueueableTech()) {
+    return -1e20;
   }
 
   return original(player, type_id);
@@ -40,6 +52,8 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
                         int32_t id2, int32_t help_string_id,
                         int32_t help_page_id, int32_t hotkey, char* color_table,
                         char* text2, char* text_msg, int32_t make_disabled) {
+  printf("configure_button(%p, %d)\n", screen, id);
+
   auto selected_unit = *reinterpret_cast<Unit**>((size_t)screen + 0x1230);
   // Action `id == 51` is the Set Gather Point action.
   if (id == 51 && selected_unit != nullptr) {
@@ -56,6 +70,7 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
         *reinterpret_cast<TrainableUnit**>((size_t)screen + 0x123C);
     bool has_real_unit = false;
     for (auto i = 0; i < num_trainable_units; i += 1) {
+      printf("trainable_unit[%d] = %d\n", i, trainable_units[i].id);
       auto unit = player->unitType(trainable_units[i].id);
       if (unit == nullptr || unit->isQueueableTech()) {
         has_real_unit = true;
@@ -83,6 +98,7 @@ static bool __stdcall get_string(int32_t lang_id, char* output,
     // `output` is a stack variable. The unit type is also on the stack when
     // this function is called.
     auto unit_type = *reinterpret_cast<UnitType**>((size_t)output - 0x90);
+    printf("get_string(%p)\n", unit_type);
     if (unit_type != nullptr && unit_type->isQueueableTech()) {
       lang_id = 20600; // "Researching"
     }
@@ -95,7 +111,7 @@ static CallHook pop_cap_hook_;
 static CallHook button_hook_;
 static CallHook lang_hook_;
 void QueueableTech::install() {
-  pop_cap_hook_.install((void*)0x45E360, (void*)get_unit_pop_count);
+  pop_cap_hook_.install((void*)0x4CBE8A, (void*)get_unit_pop_count);
   button_hook_.install((void*)0x528483, (void*)configure_button);
   lang_hook_.install((void*)0x44FEF0, (void*)get_string);
 }

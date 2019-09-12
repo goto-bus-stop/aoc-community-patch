@@ -49,7 +49,11 @@ public:
 
   /// Get a unit type that can be created by this player.
   inline UnitType* unitType(int16_t type_id) const {
-    return *reinterpret_cast<UnitType**>((size_t)this + 0x74 +
-                                         type_id * sizeof(UnitType*));
+    if (type_id < 0) return nullptr;
+    auto num_unit_types = *reinterpret_cast<int32_t*>((size_t)this + 0x70);
+    if (type_id >= num_unit_types) return nullptr;
+
+    auto unit_types = *reinterpret_cast<UnitType***>((size_t)this + 0x74);
+    return unit_types[type_id];
   }
 };
