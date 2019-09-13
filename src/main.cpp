@@ -22,7 +22,8 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   AttributeStorageMode::install();
   BRB::install();
   HillBonus::install();
-  Mercenaries::install();
+  // Buggy:
+  if (false) Mercenaries::install();
   SCXModIdentifier::install();
 
   FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
