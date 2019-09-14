@@ -11,7 +11,7 @@ jobs:
     - name: Prepare debug DLL
       run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Debug -A Win32
     - name: Build debug DLL
-      run: cmake --build build
+      run: cmake --build build --verbose
     - name: Make artifact
       run: mkdir -p artifact && cp build/Debug/* artifact && cp -R docs/ artifact
     - uses: actions/upload-artifact@master
@@ -26,7 +26,7 @@ jobs:
     - name: Prepare release DLL
       run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -A Win32
     - name: Build release DLL
-      run: cmake --build build
+      run: cmake --build build --verbose
     - name: Make artifact
       run: mkdir -p artifact && cp build/Debug/community-patch.dll artifact && cp -R docs/ artifact
     - uses: actions/upload-artifact@master

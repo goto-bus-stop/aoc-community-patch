@@ -27,11 +27,13 @@ add_compile_definitions(WINVER=0x0501)
 add_compile_definitions(WIN32_LEAN_AND_MEAN)
 
 if(MSVC)
-  if (IS_RELEASE)
-    add_link_options(/MT)
-  else()
-    add_link_options(/MTd)
-  endif()
+  foreach(flag_var
+      CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+      CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+    if(${flag_var} MATCHES "/MD")
+      string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+    endif(${flag_var} MATCHES "/MD")
+  endforeach(flag_var)
 else()
   add_compile_options(-fno-exceptions)
   if (IS_RELEASE)
