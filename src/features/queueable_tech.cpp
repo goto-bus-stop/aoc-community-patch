@@ -4,6 +4,7 @@
 #include "../game/attributes.h"
 #include "../game/player.h"
 #include "../game/unit.h"
+#include <array>
 #include <cstdint>
 #include <cstdio>
 
@@ -112,8 +113,18 @@ static bool __stdcall get_string(int32_t lang_id, char* output,
 static CallHook pop_cap_hook_;
 static CallHook button_hook_;
 static CallHook lang_hook_;
+static std::array<BytesHook, 4> scen_editor_hook_;
 void QueueableTech::install() {
   pop_cap_hook_.install((void*)0x4CBE8A, (void*)get_unit_pop_count);
   button_hook_.install((void*)0x528483, (void*)configure_button);
   lang_hook_.install((void*)0x44FEF0, (void*)get_string);
+
+  // Change explicit `if (HideInEditor == 1)` check to `if (HideInEditor >= 1)`,
+  constexpr std::array<uint8_t, 2> jump_gte = {0x0F, 0x8D};
+  scen_editor_hook_[0].install((void*)0x4E0D8F, jump_gte.data(), jump_gte.size());
+  scen_editor_hook_[1].install((void*)0x4E0AAF, jump_gte.data(), jump_gte.size());
+  scen_editor_hook_[2].install((void*)0x4E0D8F, jump_gte.data(), jump_gte.size());
+  // and `if (HideInEditor != 1)` to `if (HideInEditor < 1)`
+  constexpr std::array<uint8_t, 1> short_jump_le = {0x7C};
+  scen_editor_hook_[3].install((void*)0x7E509A, short_jump_le.data(), short_jump_le.size());
 }
