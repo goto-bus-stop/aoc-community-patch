@@ -43,10 +43,19 @@ public:
     return *reinterpret_cast<int16_t*>((size_t)this + 0x16);
   }
 
-  /// Get the internal name of this unit type.
+  /// Get the unique ID of this unit type.
+  inline int16_t id() const {
+    return *reinterpret_cast<int16_t*>((size_t)this + 0x10);
+  }
+
+  /// Get the string ID of the name of this unit type.
+  inline int16_t nameStringId() const {
+    return *reinterpret_cast<int16_t*>((size_t)this + 0x0C);
+  }
+
+  /// Get the name of this unit type.
   inline const char* name() const {
-    auto lang_id = *reinterpret_cast<int16_t*>((size_t)this + 0xC);
-    return Game::getInstance()->getString(lang_id);
+    return Game::getInstance()->getString(this->nameStringId());
   }
 
   /// Get the attributes of this unit type. These can be attributes contained in

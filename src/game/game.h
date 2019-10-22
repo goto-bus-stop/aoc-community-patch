@@ -23,6 +23,11 @@ public:
     get_string(this, lang_id, output, size);
   }
 
+  inline bool hasCliArgument(const char* value) {
+    auto has_cli_arg = getMethod<bool, Game*, const char*>(0x5EB850);
+    return has_cli_arg(this, value);
+  }
+
   static inline Game* getInstance() {
     return *reinterpret_cast<Game**>(0x7912A0);
   }
