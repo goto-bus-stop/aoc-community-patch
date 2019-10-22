@@ -1,17 +1,18 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(community-patch)
+set(CMAKE_SYSTEM_NAME Windows)
+set(CMAKE_CXX_STANDARD 17)
 
 if (UNIX)
-  set(CMAKE_CROSS_COMPILING 1)
-  set(CMAKE_SYSTEM_NAME Windows)
-  set(CMAKE_C_COMPILER i686-w64-mingw32-gcc)
-  set(CMAKE_CXX_COMPILER i686-w64-mingw32-g++)
-  set(CMAKE_RC_COMPILER i686-w64-mingw32-windres)
+  set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+  set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
-set(IS_RELEASE FALSE)
+project(community-patch)
+
+if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
+  set(IS_RELEASE TRUE)
+endif()
 
 include_directories(include/)
 
@@ -56,13 +57,10 @@ set(SOURCE_FILES
 )
 
 add_library(community-patch SHARED ${SOURCE_FILES})
-set_target_properties(community-patch PROPERTIES
-    PREFIX ""
-    SUFFIX ".dll")
+set_target_properties(community-patch PROPERTIES PREFIX "" SUFFIX ".dll")
 if(ENABLE_LTO)
   message(STATUS "Building with link time optimization")
   set_property(TARGET community-patch PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
-target_link_libraries(community-patch)
 install(TARGETS community-patch
         LIBRARY DESTINATION lib)
