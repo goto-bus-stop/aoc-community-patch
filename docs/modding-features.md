@@ -7,3 +7,6 @@ Resource 212 is a modifier for the attack multiplier when fighting uphill. The v
 
 ## "Late take" store mode
 Setting a unit resource storage's store mode to 16 acts like store mode 2, but waits for the unit's death animation has completed before resetting.
+
+## Cuman Mercenaries
+Player resources 214 and 215 influence the Cuman Mercenaries tech. When resource 214 reaches 0, the tech with ID 708 is automatically researched.

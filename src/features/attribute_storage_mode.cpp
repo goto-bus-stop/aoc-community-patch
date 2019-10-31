@@ -1,9 +1,9 @@
 #include "attribute_storage_mode.h"
-#include "../game/attributes.h"
-#include "../game/unit.h"
-#include "../game/player.h"
 #include "../auto_hook.h"
 #include "../call_conventions.h"
+#include "../game/attributes.h"
+#include "../game/player.h"
+#include "../game/unit.h"
 #include <cstdint>
 
 void take_late_attribute_from_owner(Unit* unit) {

@@ -61,7 +61,7 @@ public:
     this->uninstall();
     std::array<uint8_t, 5> bytes = {0xE9, 0, 0, 0, 0};
     int32_t offset = reinterpret_cast<int32_t>(target_address) -
-                     reinterpret_cast<int32_t>(source_address) + 5;
+                     (reinterpret_cast<int32_t>(source_address) + 5);
     memcpy(&bytes[1], &offset, sizeof(offset));
     this->write_bytes(source_address, bytes.data(), bytes.size());
   }
@@ -78,7 +78,7 @@ public:
     this->uninstall();
     std::array<uint8_t, 5> bytes = {0xE8, 0, 0, 0, 0};
     int32_t offset = reinterpret_cast<int32_t>(target_address) -
-                     reinterpret_cast<int32_t>(source_address) + 5;
+                     (reinterpret_cast<int32_t>(source_address) + 5);
     memcpy(&bytes[1], &offset, sizeof(offset));
     this->write_bytes(source_address, bytes.data(), bytes.size());
   }
