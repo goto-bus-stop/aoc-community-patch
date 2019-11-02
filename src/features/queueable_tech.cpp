@@ -53,8 +53,6 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
                         int32_t id2, int32_t help_string_id,
                         int32_t help_page_id, int32_t hotkey, char* color_table,
                         char* text2, char* text_msg, int32_t make_disabled) {
-  printf("configure_button(%p, %d)\n", screen, id);
-
   auto selected_unit = *reinterpret_cast<Unit**>((size_t)screen + 0x1230);
   // Action `id == 51` is the Set Gather Point action.
   if (id == 51 && selected_unit != nullptr) {
@@ -71,7 +69,6 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
         *reinterpret_cast<TrainableUnit**>((size_t)screen + 0x123C);
     bool has_real_unit = false;
     for (auto i = 0; i < num_trainable_units; i += 1) {
-      printf("trainable_unit[%d] = %d\n", i, trainable_units[i].id);
       auto unit = player->unitType(trainable_units[i].id);
       if (unit == nullptr || unit->isQueueableTech()) {
         has_real_unit = true;
@@ -101,7 +98,6 @@ static bool __stdcall get_string(int32_t lang_id, char* output,
     // `output` is a stack variable. The unit type is also on the stack when
     // this function is called.
     auto unit_type = *reinterpret_cast<UnitType**>((size_t)output - 0x90);
-    printf("get_string(%p)\n", unit_type);
     if (unit_type != nullptr && unit_type->isQueueableTech()) {
       lang_id = 20600; // "Researching"
     }
