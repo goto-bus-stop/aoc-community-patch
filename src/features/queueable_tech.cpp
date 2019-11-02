@@ -110,14 +110,23 @@ static bool __stdcall get_string(int32_t lang_id, char* output,
   return true;
 }
 
+static const char* THISCALL(get_string_2, void*, int32_t lang_id) {
+  std::byte stack_ptr[1];
+  if (lang_id == 0x29127) {
+    // TODO handle the "--%s created--" message
+  }
+  return Game::getInstance()->getString(lang_id);
+}
+
 static CallHook pop_cap_hook_;
 static CallHook button_hook_;
-static CallHook lang_hook_;
+static std::array<CallHook, 2> lang_hook_;
 static std::array<BytesHook, 4> scen_editor_hook_;
 void QueueableTech::install() {
   pop_cap_hook_.install((void*)0x4CBE8A, (void*)get_unit_pop_count);
   button_hook_.install((void*)0x528483, (void*)configure_button);
-  lang_hook_.install((void*)0x44FEF0, (void*)get_string);
+  lang_hook_[0].install((void*)0x44FEF0, (void*)get_string);
+  lang_hook_[1].install((void*)0x4401CB, (void*)get_string_2);
 
   // Change explicit `if (HideInEditor == 1)` check to `if (HideInEditor >= 1)`,
   constexpr std::array<uint8_t, 2> jump_gte = {0x0F, 0x8D};
