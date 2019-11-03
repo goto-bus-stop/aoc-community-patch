@@ -70,7 +70,7 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
     bool has_real_unit = false;
     for (auto i = 0; i < num_trainable_units; i += 1) {
       auto unit = player->unitType(trainable_units[i].id);
-      if (unit == nullptr || unit->isQueueableTech()) {
+      if (unit == nullptr || !unit->isQueueableTech()) {
         has_real_unit = true;
       }
     }
