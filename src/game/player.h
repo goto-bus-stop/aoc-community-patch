@@ -47,6 +47,14 @@ public:
     original(techs, tech_id);
   }
 
+  /// Check if the player has the necessary resources to research a tech.
+  inline bool canAffordTech(int16_t tech_id) const {
+    auto techs = *reinterpret_cast<void**>((size_t)this + 0x12A0);
+    auto original = getMethod<int32_t, void*, int16_t, uint8_t*, int32_t, int32_t>(0x402A9A);
+    auto can_afford = original(techs, tech_id, nullptr, 0, 0);
+    return can_afford != 0;
+  }
+
   /// Get a unit type that can be created by this player.
   inline UnitType* unitType(int16_t type_id) const {
     if (type_id < 0) return nullptr;
