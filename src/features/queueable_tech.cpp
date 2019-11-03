@@ -90,8 +90,6 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
 }
 
 /// Use "Researching" string for queueable techs, instead of "Creating".
-///
-/// TODO make this work lol
 static bool __stdcall get_string(int32_t lang_id, char* output,
                                  size_t output_size) {
   if (lang_id == 20605) { // "Creating"
