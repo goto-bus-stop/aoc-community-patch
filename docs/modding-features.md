@@ -10,3 +10,11 @@ Setting a unit resource storage's store mode to 16 acts like store mode 2, but w
 
 ## Cuman Mercenaries
 Player resources 214 and 215 influence the Cuman Mercenaries tech. When resource 214 reaches 0, the tech with ID 708 is automatically researched.
+
+## Queueable Techs
+To implement queueable techs, mod authors can use dummy units that cost no population room and trigger the tech when spawned. Each tech is tied to a player attribute so that they can be researched only once.
+Additionally, a "queueable tech" flag can be set to enable the following behaviours:
+- Change the "Creating Loom..." text during research to "Researching Loom...";
+- Bypass the population cap, if a research is at the start of a building's production queue while the player has more units than the population limit for the game;
+- Prevent showing the Gather Point button if all the units in a building are dummy units for queueable techs.
+The "queueable tech" flag is the second bit in the "Hide In Editor" flag. Set the "Hide In Editor" value to 3 in the Advanced Genie Editor for all queueable tech units to opt in to these behaviours.

@@ -2,6 +2,7 @@
 #include "features/brb.h"
 #include "features/hill_bonus.h"
 #include "features/mercenaries.h"
+#include "features/queueable_tech.h"
 #include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
@@ -25,6 +26,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   // Buggy:
   if (false) Mercenaries::install();
   SCXModIdentifier::install();
+  QueueableTech::install();
 
   FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
 }

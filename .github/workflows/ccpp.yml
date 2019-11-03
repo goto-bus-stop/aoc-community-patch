@@ -13,7 +13,10 @@ jobs:
     - name: Build debug DLL
       run: cmake --build build --verbose
     - name: Make artifact
-      run: mkdir -p artifact && cp build/Debug/* artifact && cp -R docs/ artifact
+      run: |
+        mkdir -p artifact
+        cp build/Debug/* artifact
+        cp -R docs/ artifact
     - uses: actions/upload-artifact@master
       with:
         name: community-patch-debug
@@ -28,7 +31,10 @@ jobs:
     - name: Build release DLL
       run: cmake --build build --verbose
     - name: Make artifact
-      run: mkdir -p artifact && cp build/Debug/community-patch.dll artifact && cp -R docs/ artifact
+      run: |
+        mkdir -p artifact
+        cp build/Debug/community-patch.dll artifact
+        cp -R docs/ artifact
     - uses: actions/upload-artifact@master
       with:
         name: community-patch-release

@@ -1,6 +1,7 @@
 #pragma once
 #include "../auto_hook.h"
 #include "attributes.h"
+#include "game.h"
 #include <cstdint>
 
 // Do #include "player.h" to actually use its methods.
@@ -24,6 +25,17 @@ public:
   inline float amount(int32_t index) { return this->amount_[index]; }
 };
 
+// The bits in the Hide In Editor value are, low to high:
+// - Hidden in scenario editor
+// - Queueable tech
+struct HideEditorFlags {
+public:
+  uint8_t value;
+
+  inline bool hideInEditor() const { return (value & 1) == 1; }
+  inline bool queueableTech() const { return (value & 2) == 2; }
+};
+
 class UnitType {
 public:
   /// Get the unit class of this unit type.
@@ -31,11 +43,19 @@ public:
     return *reinterpret_cast<int16_t*>((size_t)this + 0x16);
   }
 
-  /// Get the internal name of this unit type.
+  /// Get the unique ID of this unit type.
+  inline int16_t id() const {
+    return *reinterpret_cast<int16_t*>((size_t)this + 0x10);
+  }
+
+  /// Get the string ID of the name of this unit type.
+  inline int16_t nameStringId() const {
+    return *reinterpret_cast<int16_t*>((size_t)this + 0x0C);
+  }
+
+  /// Get the name of this unit type.
   inline const char* name() const {
-    auto lang_id = *reinterpret_cast<int16_t*>((size_t)this + 0xC);
-    auto get_string = getMethod<const char*, void*, int16_t>(0x43A700);
-    return get_string(*(void**)0x7912A0, lang_id);
+    return Game::getInstance()->getString(this->nameStringId());
   }
 
   /// Get the attributes of this unit type. These can be attributes contained in
@@ -45,6 +65,17 @@ public:
     return UnitAttributes(reinterpret_cast<AttributeMode*>((size_t)this + 0x90),
                           reinterpret_cast<Attribute*>((size_t)this + 0x72),
                           reinterpret_cast<float*>((size_t)this + 0x78));
+  }
+
+  inline HideEditorFlags newFlags() const {
+    return HideEditorFlags{
+      *reinterpret_cast<uint8_t*>((size_t)this + 0x56)
+    };
+  }
+
+  /// Check if this unit has the "queueable tech" flag set.
+  inline bool isQueueableTech() const {
+    return this->newFlags().queueableTech();
   }
 };
 
