@@ -4,6 +4,7 @@
 #include "../game/game.h"
 #include "../game/player.h"
 #include "../game/unit.h"
+#include "../game/draw_area.h"
 
 static size_t get_num_idles() {
   auto player = Game::getInstance()->player();
@@ -44,10 +45,35 @@ static void update_idles_button(void* screen) {
   aoc_set_number_display_value(button, count, 0);
 }
 
-/*
 static void THISCALL(fancier_draw, void* button) {
+  auto original = getMethod<void, void*>(0x551940);
+  original(button);
+
+  auto garrison_display_type = *reinterpret_cast<int32_t*>((size_t)button + 0x2D8);
+  auto garrison_number = *reinterpret_cast<int32_t*>((size_t)button + 0x2DC);
+  auto x_offset = *reinterpret_cast<int32_t*>((size_t)button + 0xC);
+  auto y_offset = *reinterpret_cast<int32_t*>((size_t)button + 0x10);
+  auto draw_area = *reinterpret_cast<DrawArea**>((size_t)button + 0x20);
+  auto clip_region = *reinterpret_cast<HRGN*>((size_t)button + 0x8C);
+
+  if (garrison_display_type && (garrison_number > 0 || garrison_display_type != 2)) {
+    if (auto context = draw_area->getDeviceContext("tpnl_btn::draw2")) {
+      SelectClipRgn(context, clip_region);
+      SetBkMode(context, TRANSPARENT);
+      char label[10];
+      sprintf(label, "%d", garrison_number);
+      SetTextColor(context, 0x000000);
+      TextOutA(context, x_offset + 2, y_offset + 1, label, strlen(label));
+      TextOutA(context, x_offset + 2, y_offset + 3, label, strlen(label));
+      TextOutA(context, x_offset + 4, y_offset + 1, label, strlen(label));
+      TextOutA(context, x_offset + 4, y_offset + 3, label, strlen(label));
+      SetTextColor(context, 0xFFFFFF);
+      TextOutA(context, x_offset + 3, y_offset + 2, label, strlen(label));
+      SelectClipRgn(context, 0);
+      draw_area->releaseDeviceContext("tpnl_inv::draw2");
+    }
+  }
 }
-*/
 
 static int32_t THISCALL(handle_paint, void* screen) {
   update_idles_button(screen);
@@ -57,6 +83,8 @@ static int32_t THISCALL(handle_paint, void* screen) {
 }
 
 static VtblHook hook_;
+static CallHook hook2_;
 void NumIdles::install() {
   hook_.install((void*)0x63F36C, (void*)handle_paint);
+  hook2_.install((void*)0x4534AF, (void*)fancier_draw);
 }

@@ -57,6 +57,7 @@ set(SOURCE_FILES
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
   src/game/player.cpp
+  src/game/draw_area.cpp
 )
 
 add_library(community-patch SHARED ${SOURCE_FILES})
