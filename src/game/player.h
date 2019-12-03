@@ -3,6 +3,8 @@
 #include "attributes.h"
 #include <cmath>
 #include <cstdint>
+#include <array>
+#include <memory>
 
 /// Include "unit.h" to use this class's methods.
 class UnitType;
@@ -35,6 +37,7 @@ public:
 };
 
 class Player {
+private:
   /// The game's structure for object lists.
   struct InternalObjectList {
   private:
@@ -48,7 +51,34 @@ class Player {
     bool c_;
   };
 
+  /// Helper for counting unit types.
+  class UnitCounts {
+  private:
+    std::unique_ptr<uint16_t[]> counts;
+  public:
+    UnitCounts() {
+      counts = std::make_unique<uint16_t[]>(8092);
+    }
+
+    constexpr uint16_t operator[](uint16_t index) const {
+      if (index >= 8092) return 0;
+      return counts[index];
+    }
+    constexpr void update(uint16_t index, int16_t amount) {
+      if (index >= 8092) return;
+      counts[index] += amount;
+    }
+  };
+
+  static std::array<UnitCounts, 9> unit_counts;
+  static std::array<UnitCounts, 9> completed_unit_counts;
+
 public:
+  /// Get the index of this player in the player array.
+  inline int32_t index() const {
+    return *reinterpret_cast<int32_t*>((size_t)this + 0x9C);
+  }
+
   /// Get the number of attributes this player has.
   inline int32_t numAttributes() const {
     return *reinterpret_cast<int32_t*>((size_t)this + 0xA4);
@@ -97,8 +127,21 @@ public:
     return unit_types[type_id];
   }
 
+  /// Get the list of all active units this player owns.
   inline UnitList units() {
     auto units = *reinterpret_cast<InternalObjectList**>((size_t)this + 0x78);
     return UnitList{units->list, units->list + units->size};
   }
+
+  /// Get the total number of units of a certain type that this player has, completed and in progress.
+  inline uint16_t unitTypeCount(uint16_t type_id) const {
+    return unit_counts[this->index()][type_id];
+  }
+
+  /// Update the total number of units of a certain type that this player has.
+  inline void updateUnitTypeCount(uint16_t type_id, int16_t amount) {
+    unit_counts[this->index()].update(type_id, amount);
+  }
+
+  static void install();
 };
