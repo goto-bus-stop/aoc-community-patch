@@ -23,8 +23,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   AttributeStorageMode::install();
   BRB::install();
   HillBonus::install();
-  // Buggy:
-  if (false) Mercenaries::install();
+  Mercenaries::install();
   SCXModIdentifier::install();
   QueueableTech::install();
 

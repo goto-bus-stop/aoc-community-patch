@@ -20,6 +20,10 @@ static void check_kipchak(Player* player) {
 
 void THISCALL(hook_add_attribute, Player* player, int16_t attribute_id,
                                    float value, int32_t flag) {
+  auto old_value = attribute_id == static_cast<int16_t>(Attribute::MercenaryKipchakCount)
+    ? player->attribute(Attribute::MercenaryKipchakCount)
+    : NAN;
+
   auto original = getMethod<void, Player*, int16_t, float, int32_t>(0x45A990);
   original(player, attribute_id, value, flag);
 
@@ -35,7 +39,7 @@ void THISCALL(hook_add_attribute, Player* player, int16_t attribute_id,
   }
 
   // When MercenaryKipchakCount reaches 0, trigger DisableKipchakTech
-  if (attribute_id == static_cast<int16_t>(Attribute::MercenaryKipchakCount)) {
+  if (attribute_id == static_cast<int16_t>(Attribute::MercenaryKipchakCount) && old_value > 0.0f) {
     check_kipchak(player);
   }
 }
