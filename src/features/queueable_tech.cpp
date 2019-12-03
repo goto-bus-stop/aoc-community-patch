@@ -34,17 +34,19 @@ static double THISCALL(get_unit_pop_count, Player* player, int16_t type_id) {
 
 struct TrainableUnit {
 public:
-  char* name;
-  int16_t id;
-  int16_t pict;
-  int16_t inventory_item_1;
-  float inventory_cost_1;
-  int16_t inventory_item_2;
-  float inventory_cost_2;
-  int16_t inventory_item_3;
-  float inventory_cost_3;
-  int32_t help_string_id;
-  int32_t help_page_id;
+  char* name = nullptr;
+  int16_t id = 0;
+  int16_t pict = 0;
+  int16_t inventory_item_1 = 0;
+  float inventory_cost_1 = 0.0f;
+  int16_t inventory_item_2 = 0;
+  float inventory_cost_2 = 0.0f;
+  int16_t inventory_item_3 = 0;
+  float inventory_cost_3 = 0.0f;
+  int32_t help_string_id = 0;
+  int32_t help_page_id = 0;
+
+  TrainableUnit(const TrainableUnit&) = default;
 };
 
 /// Don't show the gather point action.
@@ -89,6 +91,23 @@ static int16_t THISCALL(configure_button, void* screen, void* button_shapes,
                   text_msg, make_disabled);
 }
 
+/// Remove the buttons for queueable techs when they are in-progress.
+static void THISCALL(get_available_units, Player* player, TrainableUnit** trainable_units, int16_t* num_trainable_units, int16_t buildable_from) {
+  auto original = getMethod<void, Player*, TrainableUnit**, int16_t*, int16_t>(0x456D50);
+  original(player, trainable_units, num_trainable_units, buildable_from);
+
+  auto list = *trainable_units;
+  for (int16_t i = 0; i < *num_trainable_units; i += 1) {
+    auto id = list[i].id;
+    auto unit = player->unitType(id);
+    if (unit != nullptr && unit->isQueueableTech() && player->unitTypeCount(id) > 0) {
+      // Pop the last one and move it into the current slot, overriding the in-progress queueable tech
+      *num_trainable_units -= 1;
+      std::swap(list[i], list[*num_trainable_units]);
+    }
+  }
+}
+
 /// Use "Researching" string for queueable techs, instead of "Creating".
 static bool __stdcall get_string(int32_t lang_id, char* output,
                                  size_t output_size) {
@@ -115,10 +134,13 @@ static const char* THISCALL(get_string_2, void*, int32_t lang_id) {
 static CallHook pop_cap_hook_;
 static CallHook button_hook_;
 static std::array<CallHook, 2> lang_hook_;
+static std::array<CallHook, 2> available_hook_;
 static std::array<BytesHook, 4> scen_editor_hook_;
 void QueueableTech::install() {
   pop_cap_hook_.install((void*)0x4CBE8A, (void*)get_unit_pop_count);
   button_hook_.install((void*)0x528483, (void*)configure_button);
+  available_hook_[0].install((void*)0x527D37, (void*)get_available_units);
+  available_hook_[1].install((void*)0x528449, (void*)get_available_units);
   lang_hook_[0].install((void*)0x44FEF0, (void*)get_string);
   lang_hook_[1].install((void*)0x4401CB, (void*)get_string_2);
 

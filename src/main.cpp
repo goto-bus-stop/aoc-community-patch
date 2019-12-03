@@ -6,6 +6,7 @@
 #include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
+#include "game/player.h"
 #include <mmmod.h>
 #include <windows.h>
 
@@ -15,6 +16,9 @@ extern "C" __declspec(dllexport) void mmm_load(mmm_mod_info* info) {
 }
 
 extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
+  // Support
+  Player::install();
+
   // Fixes
   KeyState::install();
   ScenEditMinimapPosition::install();
