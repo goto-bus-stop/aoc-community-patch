@@ -104,6 +104,7 @@ static void THISCALL(get_available_units, Player* player, TrainableUnit** traina
       // Pop the last one and move it into the current slot, overriding the in-progress queueable tech
       *num_trainable_units -= 1;
       std::swap(list[i], list[*num_trainable_units]);
+      i -= 1;
     }
   }
 }
