@@ -20,17 +20,18 @@ uint16_t WINAPI get_key_state(int32_t virt_key) {
   return state & 0x8001;
 }
 
-bool WINAPI get_keyboard_state(uint8_t* states) {
+
+
+int32_t WINAPI get_keyboard_state(uint8_t* states) {
   auto res = GetKeyboardState(states);
-  if (res)
-    return res;
+  dbg_print("keyboard_state: [< %x > %x ^ %x v %x]\n", states[VK_LEFT], states[VK_RIGHT], states[VK_UP], states[VK_DOWN]);
 
   for (auto i = 0; i < 256; i += 1) {
     // Only the low-order and high-order bits are defined.
     states[i] &= 0x81;
   }
 
-  return false;
+  return res;
 }
 
 uint16_t WINAPI get_async_key_state(int32_t virt_key) {
