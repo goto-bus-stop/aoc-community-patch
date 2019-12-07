@@ -55,6 +55,8 @@ set(SOURCE_FILES
   src/features/queueable_tech.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
+  src/fixes/scenedit_pierce_armor.cpp
+  src/game/player.cpp
 )
 
 add_library(community-patch SHARED ${SOURCE_FILES})
