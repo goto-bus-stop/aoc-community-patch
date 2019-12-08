@@ -63,7 +63,7 @@ static void THISCALL(fancier_draw, void* button) {
   auto font = *reinterpret_cast<HFONT*>((size_t)button + 0x1F0);
 
   if (garrison_display_type && (garrison_number > 0 || garrison_display_type != 2)) {
-    if (auto context = draw_area->getDeviceContext("tpnl_btn::draw2")) {
+    if (auto context = draw_area->getDeviceContext("tpnl_iv")) {
       SelectClipRgn(context, clip_region);
       auto old_font = SelectObject(context, font);
       SetBkMode(context, TRANSPARENT);
@@ -79,7 +79,7 @@ static void THISCALL(fancier_draw, void* button) {
       TextOutA(context, x_offset + 3, y_offset + 2, label, c);
       SelectClipRgn(context, 0);
       SelectObject(context, old_font);
-      draw_area->releaseDeviceContext("tpnl_inv::draw2");
+      draw_area->releaseDeviceContext("tpnl_iv");
     }
   }
 }
