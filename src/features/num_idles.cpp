@@ -5,6 +5,7 @@
 #include "../game/player.h"
 #include "../game/unit.h"
 #include "../game/draw_area.h"
+#include <charconv>
 
 static size_t get_num_idles() {
   auto player = Game::getInstance()->player();
@@ -62,14 +63,14 @@ static void THISCALL(fancier_draw, void* button) {
   auto clip_region = *reinterpret_cast<HRGN*>((size_t)button + 0x8C);
   auto font = *reinterpret_cast<HFONT*>((size_t)button + 0x1F0);
 
-  if (garrison_display_type && (garrison_number > 0 || garrison_display_type != 2)) {
+  if (garrison_display_type == 1 || (garrison_display_type == 2 && garrison_number > 0)) {
     if (auto context = draw_area->getDeviceContext("tpnl_iv")) {
       SelectClipRgn(context, clip_region);
       auto old_font = SelectObject(context, font);
       SetBkMode(context, TRANSPARENT);
       char label[10];
-      sprintf(label, "%d", garrison_number);
-      auto c = strlen(label);
+      auto label_end = std::to_chars(label, label + sizeof(label), garrison_number);
+      auto c = label_end.ptr - label;
       SetTextColor(context, 0x000000);
       TextOutA(context, x_offset + 2, y_offset + 1, label, c);
       TextOutA(context, x_offset + 2, y_offset + 3, label, c);
