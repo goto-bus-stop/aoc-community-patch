@@ -8,9 +8,6 @@
 static const int16_t DisableKipchakTech = 708;
 
 static void check_kipchak(Player* player) {
-  auto log_message = getMethod<int32_t, void*, const char*, const char*,
-                               int32_t, int32_t, int32_t>(0x5E2780);
-
   // When MercenaryKipchakCount reaches 0, trigger DisableKipchakTech
   if (player->attribute(Attribute::MercenaryKipchakCount) == 0.0f) {
     player->triggerTech(DisableKipchakTech);

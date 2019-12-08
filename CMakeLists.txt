@@ -56,6 +56,7 @@ set(SOURCE_FILES
   src/features/scx_mod_identifier.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
+  src/fixes/scenedit_pierce_armor.cpp
   src/game/player.cpp
   src/game/draw_area.cpp
 )

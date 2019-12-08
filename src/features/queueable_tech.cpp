@@ -8,6 +8,12 @@
 #include <cstdint>
 #include <cstdio>
 
+static CallHook pop_cap_hook_;
+static CallHook button_hook_;
+static std::array<CallHook, 2> lang_hook_;
+static std::array<CallHook, 2> available_hook_;
+static std::array<BytesHook, 4> scen_editor_hook_;
+
 /// Bypass pop cap by pretending that queueable tech units have an invalid pop
 /// value.
 ///
@@ -103,7 +109,7 @@ static void THISCALL(get_available_units, Player* player, TrainableUnit** traina
     if (unit != nullptr && unit->isQueueableTech() && player->unitTypeCount(id) > 0) {
       // Pop the last one and move it into the current slot, overriding the in-progress queueable tech
       *num_trainable_units -= 1;
-      std::swap(list[i], list[*num_trainable_units]);
+      list[i] = list[*num_trainable_units];
       i -= 1;
     }
   }
@@ -124,26 +130,22 @@ static bool __stdcall get_string(int32_t lang_id, char* output,
   return true;
 }
 
+// TODO handle the "--%s created--" message
+/*
 static const char* THISCALL(get_string_2, void*, int32_t lang_id) {
-  std::byte stack_ptr[1];
   if (lang_id == 0x29127) {
-    // TODO handle the "--%s created--" message
   }
   return Game::getInstance()->getString(lang_id);
 }
+*/
 
-static CallHook pop_cap_hook_;
-static CallHook button_hook_;
-static std::array<CallHook, 2> lang_hook_;
-static std::array<CallHook, 2> available_hook_;
-static std::array<BytesHook, 4> scen_editor_hook_;
 void QueueableTech::install() {
   pop_cap_hook_.install((void*)0x4CBE8A, (void*)get_unit_pop_count);
   button_hook_.install((void*)0x528483, (void*)configure_button);
   available_hook_[0].install((void*)0x527D37, (void*)get_available_units);
   available_hook_[1].install((void*)0x528449, (void*)get_available_units);
   lang_hook_[0].install((void*)0x44FEF0, (void*)get_string);
-  lang_hook_[1].install((void*)0x4401CB, (void*)get_string_2);
+  /* lang_hook_[1].install((void*)0x4401CD, (void*)get_string_2); */
 
   // Change explicit `if (HideInEditor == 1)` check to `if (HideInEditor >= 1)`,
   constexpr std::array<uint8_t, 2> jump_gte = {0x0F, 0x8D};
