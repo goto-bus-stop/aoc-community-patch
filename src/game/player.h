@@ -9,8 +9,49 @@
 /// Include "unit.h" to use this class's methods.
 class UnitType;
 
+/// Include "unit.h" to use this class's methods.
+class Unit;
+
+/// Mini wrapper for an iterator pair because all the custom `std::span`s
+/// on Github are super complicated and because using pointer-length pairs
+/// is not a good time.
+class UnitList {
+private:
+  Unit** start_;
+  Unit** end_;
+
+public:
+  constexpr UnitList(Unit** start, Unit** end) : start_(start), end_(end) {}
+
+  constexpr auto begin() { return start_; }
+  constexpr auto begin() const { return start_; }
+  constexpr auto cbegin() const { return start_; }
+  constexpr auto end() { return end_; }
+  constexpr auto end() const { return end_; }
+  constexpr auto cend() const { return end_; }
+
+  constexpr Unit** data() { return start_; }
+  constexpr size_t size() const { return end_ - start_; }
+
+  constexpr Unit* operator[](size_t index) { return start_[index]; }
+};
+
 class Player {
 private:
+  /// The game's structure for object lists.
+  struct InternalObjectList {
+  private:
+    void* vftbl_;
+  public:
+    Unit** list;
+    size_t size;
+  private:
+    size_t a_;
+    size_t b_;
+    bool c_;
+  };
+
+  /// Helper for counting unit types.
   class UnitCounts {
   private:
     std::unique_ptr<uint16_t[]> counts;
@@ -31,6 +72,7 @@ private:
 
   static std::array<UnitCounts, 9> unit_counts;
   static std::array<UnitCounts, 9> completed_unit_counts;
+
 public:
   /// Get the index of this player in the player array.
   inline int32_t index() const {
@@ -83,6 +125,12 @@ public:
 
     auto unit_types = *reinterpret_cast<UnitType***>((size_t)this + 0x74);
     return unit_types[type_id];
+  }
+
+  /// Get the list of all active units this player owns.
+  inline UnitList units() {
+    auto units = *reinterpret_cast<InternalObjectList**>((size_t)this + 0x78);
+    return UnitList{units->list, units->list + units->size};
   }
 
   /// Get the total number of units of a certain type that this player has, completed and in progress.

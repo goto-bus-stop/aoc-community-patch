@@ -51,12 +51,14 @@ set(SOURCE_FILES
   src/features/brb.cpp
   src/features/hill_bonus.cpp
   src/features/mercenaries.cpp
-  src/features/scx_mod_identifier.cpp
+  src/features/num_idles.cpp
   src/features/queueable_tech.cpp
+  src/features/scx_mod_identifier.cpp
   src/fixes/keystate.cpp
   src/fixes/scenedit_minimap_position.cpp
   src/fixes/scenedit_pierce_armor.cpp
   src/game/player.cpp
+  src/game/draw_area.cpp
 )
 
 add_library(community-patch SHARED ${SOURCE_FILES})
