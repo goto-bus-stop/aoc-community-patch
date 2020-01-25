@@ -7,6 +7,9 @@
 #include "../game/draw_area.h"
 #include <charconv>
 
+constexpr uint32_t Black = 0x00'00'00;
+constexpr uint32_t White = 0xFF'FF'FF;
+
 static size_t get_num_idles() {
   auto player = Game::getInstance()->player();
   auto units = player->units();
@@ -61,7 +64,7 @@ static void THISCALL(fancier_draw, void* button) {
   auto y_offset = *reinterpret_cast<int32_t*>((size_t)button + 0x10);
   auto draw_area = *reinterpret_cast<DrawArea**>((size_t)button + 0x20);
   auto clip_region = *reinterpret_cast<HRGN*>((size_t)button + 0x8C);
-  auto font = *reinterpret_cast<HFONT*>((size_t)button + 0x1F0);
+  auto font = *reinterpret_cast<HFONT*>((size_t)button + 0x1F4);
 
   if (garrison_display_type == 1 || (garrison_display_type == 2 && garrison_number > 0)) {
     if (auto context = draw_area->getDeviceContext("tpnl_iv")) {
@@ -71,12 +74,12 @@ static void THISCALL(fancier_draw, void* button) {
       char label[10];
       auto label_end = std::to_chars(label, label + sizeof(label), garrison_number);
       auto c = label_end.ptr - label;
-      SetTextColor(context, 0x000000);
+      SetTextColor(context, Black);
       TextOutA(context, x_offset + 2, y_offset + 1, label, c);
       TextOutA(context, x_offset + 2, y_offset + 3, label, c);
       TextOutA(context, x_offset + 4, y_offset + 1, label, c);
       TextOutA(context, x_offset + 4, y_offset + 3, label, c);
-      SetTextColor(context, 0xFFFFFF);
+      SetTextColor(context, White);
       TextOutA(context, x_offset + 3, y_offset + 2, label, c);
       SelectClipRgn(context, 0);
       SelectObject(context, old_font);
