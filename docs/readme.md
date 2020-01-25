@@ -10,5 +10,8 @@ For an overview of the new modding features, see [modding-features.md](./modding
 The Community Patch stores more data in files like scenarios and recorded games, so they can be analyzed in more detail by third-party parsers. See [file-formats.md](./file-formats.md) for an overview.
 
 ## Fixes
-- Scrolling no longer gets stuck when playing on Linux/Wine
-- The scenario editor no longer displays pierce armour as bonus range
+- Scrolling no longer gets stuck when playing on Linux/Wine.
+- The scenario editor no longer displays pierce armour as bonus range.
+
+## Features
+- The number of idle villagers is shown on top of the Idle Villager button.
