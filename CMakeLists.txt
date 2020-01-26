@@ -52,6 +52,7 @@ set(SOURCE_FILES
   src/features/hill_bonus.cpp
   src/features/mercenaries.cpp
   src/features/num_idles.cpp
+  src/features/num_resource_gatherers.cpp
   src/features/queueable_tech.cpp
   src/features/scx_mod_identifier.cpp
   src/fixes/keystate.cpp

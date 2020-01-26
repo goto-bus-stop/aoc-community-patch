@@ -3,6 +3,7 @@
 #include "features/hill_bonus.h"
 #include "features/mercenaries.h"
 #include "features/num_idles.h"
+#include "features/num_resource_gatherers.h"
 #include "features/queueable_tech.h"
 #include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
@@ -34,6 +35,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   SCXModIdentifier::install();
   QueueableTech::install();
   NumIdles::install();
+  NumResourceGatherers::install();
 
   FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
 }
