@@ -1,3 +1,4 @@
+#include "config.h"
 #include "features/attribute_storage_mode.h"
 #include "features/brb.h"
 #include "features/hill_bonus.h"

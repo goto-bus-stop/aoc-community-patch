@@ -46,6 +46,7 @@ target_sources(community-patch
           src/fixes/keystate.cpp
           src/fixes/scenedit_minimap_position.cpp
           src/fixes/scenedit_pierce_armor.cpp
+          src/game/panel.cpp
           src/game/player.cpp
           src/game/draw_area.cpp
 )
