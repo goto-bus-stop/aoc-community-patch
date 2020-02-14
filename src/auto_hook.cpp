@@ -14,16 +14,7 @@ void AutoHook::write_bytes(void* ptr, const uint8_t* patch, size_t size) {
   assert(patch != NULL);
   assert(size > 0);
 
-  void* orig_data;
-  if (size > 12) {
-    this->big_orig_data_ = malloc(size);
-    orig_data = this->big_orig_data_;
-  } else {
-    orig_data = this->small_orig_data_.data();
-  }
-
-  if (orig_data == nullptr)
-    return;
+  this->orig_data_ = std::make_unique<uint8_t[]>(size);
 
   DWORD old;
   DWORD tmp;
@@ -32,7 +23,7 @@ void AutoHook::write_bytes(void* ptr, const uint8_t* patch, size_t size) {
     this->uninstall();
     return;
   }
-  memcpy(orig_data, patch, size);
-  memcpy(ptr, patch, size);
+  std::memcpy(this->orig_data_.get(), ptr, size);
+  std::memcpy(ptr, patch, size);
   VirtualProtect(ptr, size, old, &tmp);
 }
