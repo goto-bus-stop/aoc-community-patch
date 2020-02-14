@@ -42,6 +42,11 @@ extern "C" __declspec(dllexport) void mmm_load(mmm_mod_info* info) {
 }
 
 extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
+  auto base_dir = info->meta->mod_base_dir;
+  char config_file[260];
+  sprintf(config_file, "%sconfig.ini", base_dir);
+  Config::getInstance()->load(config_file);
+
   // Support
   Player::install();
 

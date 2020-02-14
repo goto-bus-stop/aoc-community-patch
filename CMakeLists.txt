@@ -32,6 +32,8 @@ add_library(community-patch SHARED)
 
 target_sources(community-patch
   PRIVATE src/main.cpp
+          src/config.cpp
+          src/ini.c
           src/auto_hook.cpp
           src/features/attribute_storage_mode.cpp
           src/features/brb.cpp
