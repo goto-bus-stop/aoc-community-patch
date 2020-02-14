@@ -45,8 +45,10 @@ else()
 endif()
 
 set(SOURCE_FILES
-  src/main.cpp
   src/auto_hook.cpp
+  src/config.cpp
+  src/ini.c
+  src/main.cpp
   src/features/attribute_storage_mode.cpp
   src/features/brb.cpp
   src/features/hill_bonus.cpp
