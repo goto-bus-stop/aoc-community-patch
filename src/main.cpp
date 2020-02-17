@@ -12,6 +12,30 @@
 #include <mmmod.h>
 #include <windows.h>
 
+// Override new operator with game new operator.
+void* operator new(unsigned int size) {
+  // Call game new
+  return ((void* (*)(unsigned int))0x6137B0)(size);
+}
+
+// Override delete operator with game delete operator.
+void operator delete(void *ptr) noexcept {
+  // Call game delete
+  ((void(*)(void*))0x6137BE)(ptr);
+}
+
+// Override new operator with game new operator.
+void* operator new[](unsigned int size) {
+  // Call game new
+  return ((void* (*)(unsigned int))0x6137B0)(size);
+}
+
+// Override delete operator with game delete operator.
+void operator delete[](void *ptr) noexcept {
+  // Call game delete
+  ((void(*)(void*))0x6137BE)(ptr);
+}
+
 extern "C" __declspec(dllexport) void mmm_load(mmm_mod_info* info) {
   info->name = "Community Patch (Core)";
   info->version = "0.0.0-alpha.0";
