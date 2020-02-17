@@ -2,6 +2,7 @@
 #include "features/brb.h"
 #include "features/hill_bonus.h"
 #include "features/mercenaries.h"
+#include "features/num_idles.h"
 #include "features/queueable_tech.h"
 #include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
@@ -10,6 +11,30 @@
 #include "game/player.h"
 #include <mmmod.h>
 #include <windows.h>
+
+// Override new operator with game new operator.
+void* operator new(unsigned int size) {
+  // Call game new
+  return ((void* (*)(unsigned int))0x6137B0)(size);
+}
+
+// Override delete operator with game delete operator.
+void operator delete(void *ptr) noexcept {
+  // Call game delete
+  ((void(*)(void*))0x6137BE)(ptr);
+}
+
+// Override new operator with game new operator.
+void* operator new[](unsigned int size) {
+  // Call game new
+  return ((void* (*)(unsigned int))0x6137B0)(size);
+}
+
+// Override delete operator with game delete operator.
+void operator delete[](void *ptr) noexcept {
+  // Call game delete
+  ((void(*)(void*))0x6137BE)(ptr);
+}
 
 extern "C" __declspec(dllexport) void mmm_load(mmm_mod_info* info) {
   info->name = "Community Patch (Core)";
@@ -32,6 +57,7 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   Mercenaries::install();
   SCXModIdentifier::install();
   QueueableTech::install();
+  NumIdles::install();
 
   FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
 }

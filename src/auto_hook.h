@@ -1,8 +1,8 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include <cstdlib>
 #include <cstring>
+#include <memory>
 
 template <typename ReturnType, typename ThisArg, typename... Args>
 inline auto getMethod(size_t address) {
@@ -25,10 +25,7 @@ class AutoHook {
 protected:
   void* ptr_ = nullptr;
   size_t orig_size_ = 0;
-  union {
-    void* big_orig_data_;
-    std::array<uint8_t, 12> small_orig_data_;
-  };
+  std::unique_ptr<uint8_t[]> orig_data_ = nullptr;
 
   void write_bytes(void* at, const uint8_t* patch, size_t size);
 
@@ -37,16 +34,11 @@ public:
 
   void uninstall() {
     if (this->ptr_ != nullptr) {
-      if (this->orig_size_ > 12) {
-        memcpy(this->ptr_, this->big_orig_data_, this->orig_size_);
-        free(this->big_orig_data_);
-      } else {
-        memcpy(this->ptr_, this->small_orig_data_.data(), this->orig_size_);
-      }
+      std::memcpy(this->ptr_, this->orig_data_.get(), this->orig_size_);
       this->ptr_ = nullptr;
-      this->orig_size_ = 0;
-      this->small_orig_data_.fill(0);
     }
+    this->orig_data_.reset();
+    this->orig_size_ = 0;
   }
 };
 

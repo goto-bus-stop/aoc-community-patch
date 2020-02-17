@@ -36,11 +36,77 @@ public:
   inline bool queueableTech() const { return (value & 2) == 2; }
 };
 
+enum class UnitClass : int16_t {
+  AllClasses = -1,
+  Archer = 0,
+  Artifact = 1,
+  TradeBoat = 2,
+  Building = 3,
+  Civilian = 4,
+  OceanFish = 5,
+  Infantry = 6,
+  BerryBush = 7,
+  StoneMine = 8,
+  PreyAnimal = 9,
+  PredatorAnimal = 10,
+  Miscellaneous = 11,
+  Cavalry = 12,
+  SiegeWeapon = 0xD,
+  Terrain = 0xE,
+  Tree = 0xF,
+  TreeStump = 0x10,
+  Healer = 0x11,
+  Monk = 0x12,
+  TradeCart = 0x13,
+  TransportBoat = 0x14,
+  FishingBoat = 0x15,
+  Warship = 0x16,
+  Conquistador = 0x17,
+  WarElephant = 0x18,
+  Hero = 0x19,
+  ElephantArcher = 0x1A,
+  Wall = 0x1B,
+  Phalanx = 0x1C,
+  DomesticAnimal = 0x1D,
+  Flag = 0x1E,
+  DeepSeaFish = 0x1F,
+  GoldMine = 0x20,
+  ShoreFish = 0x21,
+  Cliff = 0x22,
+  Petard = 0x23,
+  CavalryArcer = 0x24,
+  Doppelganger = 0x25,
+  Bird = 0x26,
+  Gate = 0x27,
+  SalvagePile = 0x28,
+  ResourcePile = 0x29,
+  Relic = 0x2A,
+  MonkWithRelic = 0x2B,
+  HandCannoneer = 0x2C,
+  TwoHandedSwordsman = 0x2D,
+  Pikeman = 0x2E,
+  Scout = 0x2F,
+  OreMine = 0x30,
+  Farm = 0x31,
+  Spearman = 0x32,
+  PackedUnit = 0x33,
+  Tower = 0x34,
+  BoardingBoat = 0x35,
+  UnpackedSiegeUnit = 0x36,
+  Ballista = 0x37,
+  Raider = 0x38,
+  CavalryRaider = 0x39,
+  Livestock = 0x3A,
+  King = 0x3B,
+  MiscBuilding = 0x3C,
+  ControlledAnimal = 0x3D,
+};
+
 class UnitType {
 public:
   /// Get the unit class of this unit type.
-  inline int16_t unitClass() const {
-    return *reinterpret_cast<int16_t*>((size_t)this + 0x16);
+  inline UnitClass unitClass() const {
+    return *reinterpret_cast<UnitClass*>((size_t)this + 0x16);
   }
 
   /// Get the unique ID of this unit type.
@@ -85,6 +151,11 @@ public:
   inline int32_t id() const {
     return *reinterpret_cast<int32_t*>((size_t)this + 0x4);
   }
+  /// Get the base type ID of this unit, indicating whether it's a
+  /// static, action, moving, combat unit etc.
+  inline uint8_t baseTypeId() const {
+    return *reinterpret_cast<uint8_t*>((size_t)this + 0x4E);
+  }
   /// Get the unit type.
   inline UnitType* type() const {
     return *reinterpret_cast<UnitType**>((size_t)this + 0x8);
@@ -106,5 +177,11 @@ public:
   inline bool isCharging() const {
     auto original = getMethod<bool, const Unit*>(0x4C5F10);
     return original(this);
+  }
+
+  /// Check if the unit is idle.
+  inline bool isIdle() const {
+    auto original = getMethod<bool, const Unit*>(0x5FF6F0);
+    return this->baseTypeId() >= 40 && original(this);
   }
 };
