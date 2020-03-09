@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (UNIX)
   set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
