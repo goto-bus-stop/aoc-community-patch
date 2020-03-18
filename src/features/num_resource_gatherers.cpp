@@ -240,7 +240,7 @@ public:
   }
 
   void drawItem(int32_t item, int32_t x, int32_t y, int32_t num1) {
-    this->drawItem(item, x, y, 1, num1);
+    this->drawItem(item, x, y, 1, num1, 0);
   }
   void drawItem(int32_t item, int32_t x, int32_t y, int32_t num1, int32_t num2) {
     this->drawItem(item, x, y, 2, num1, num2);
@@ -374,10 +374,10 @@ public:
     *reinterpret_cast<ResourcePanel**>(0x695794) = panel;
   }
 
-  static size_t memory_size_;
+  static std::size_t memory_size_;
 };
 
-size_t ResourcePanel::memory_size_ = sizeof(ResourcePanel);
+std::size_t ResourcePanel::memory_size_ = sizeof(ResourcePanel);
 
 static void THISCALL(set_text_color, ResourcePanel* panel, uint32_t font_color, uint32_t background_color) {
   panel->setTextColor(font_color, background_color);
