@@ -76,70 +76,11 @@ static int32_t count_gatherers() {
   return count;
 }
 
-/*
-/// Adds villager count labelling to `TRIBE_Panel_Inven`.
-static void THISCALL(draw_item, void* inventory, int32_t index, int32_t x, int32_t y, int32_t num_arguments, int32_t arg1, int32_t arg2) {
-  if (num_arguments == 1) {
-    switch (index) {
-    case 0:
-      arg2 = count_gatherers<Attribute::FoodStorage>();
-      break;
-    case 1:
-      arg2 = count_gatherers<Attribute::WoodStorage>();
-      break;
-    case 2:
-      arg2 = count_gatherers<Attribute::GoldStorage>();
-      break;
-    case 3:
-      arg2 = count_gatherers<Attribute::StoneStorage>();
-      break;
-    }
-
-    // just use the classic style
-    if (arg2 == 0) {
-      auto original = getMethod<void, void*, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t>(0x452A80);
-      original(inventory, index, x, y, num_arguments, arg1, arg2);
-      return;
-    }
-
-    num_arguments = 2;
-  }
-
-  auto x_offset = *reinterpret_cast<int32_t*>((size_t)inventory + 0xC);
-  auto y_offset = *reinterpret_cast<int32_t*>((size_t)inventory + 0x10);
-  auto draw_area = *reinterpret_cast<DrawArea**>((size_t)inventory + 0x20);
-  auto font_color = *reinterpret_cast<uint32_t*>((size_t)inventory + 0x128);
-  auto background_color = *reinterpret_cast<uint32_t*>((size_t)inventory + 0x12C);
-
-  x += x_offset;
-  y += y_offset;
-
-  char message[40];
-  switch (num_arguments) {
-  case 2:
-    sprintf(message, "%d / %d", arg1, arg2);
-    break;
-  case 1:
-    sprintf(message, "%d", arg1);
-    break;
-  default:
-    strcpy(message, " ");
-    break;
-  }
-  auto length = strlen(message);
-
-  SetTextColor(draw_area->deviceContext(), background_color);
-  TextOut(draw_area->deviceContext(), x - 1, y + 1, message, length);
-  SetTextColor(draw_area->deviceContext(), font_color);
-  TextOut(draw_area->deviceContext(), x, y, message, length);
-}
-*/
-
 class ResourcePanel : public Panel {
 protected:
   Player* player_;
   HFONT font_;
-  uint32_t background_color_ = 0x00'00'00;
+  uint32_t shadow_color_ = 0x00'00'00;
   uint32_t font_color_ = 0xFF'FF'FF;
   Shape resource_icons_{"resico.shp", 50760};
   Shape flash_icons_{"pocap.shp", 53002};
@@ -183,7 +124,7 @@ public:
 
   void setTextColor(uint32_t font_color, uint32_t back_color) {
     this->font_color_ = font_color;
-    this->background_color_ = back_color;
+    this->shadow_color_ = back_color;
     this->setRedraw();
   }
 
@@ -212,25 +153,16 @@ public:
     this->saved_max_pop_ = this->player_->attribute(Attribute::PopulationHeadroom);
   }
 
-  void drawItem(int32_t item, int32_t x, int32_t y, int8_t num_count, int32_t num1, int32_t num2) {
-    printf("[aoc-community-patch] ResourcePanel::drawItem(%d, x=%d, y=%d, count=%d, 1=%d, 2=%d)\n", item, x, y, num_count, num1, num2);
+  void drawItem(int32_t item, int32_t x, int32_t y, const char* text, std::size_t len) {
+    printf("[aoc-community-patch] ResourcePanel::drawItem(%d, x=%d, y=%d, text=%s)\n", item, x, y, text);
     x += this->x_offset_;
     y += this->y_offset_;
 
-    char text[100];
-    if (num_count == 1) {
-      sprintf(text, "%d", num1);
-    } else if (num_count == 2) {
-      sprintf(text, "%d/%d", num1, num2);
-    } else {
-      strcpy(text, " ");
-    }
-
     auto dc = this->draw_area_->deviceContext();
-    SetTextColor(dc, this->background_color_);
-    TextOut(dc, x - 1, y + 1, text, strlen(text));
+    SetTextColor(dc, this->shadow_color_);
+    TextOut(dc, x - 1, y + 1, text, len);
     SetTextColor(dc, this->font_color_);
-    TextOut(dc, x, y, text, strlen(text));
+    TextOut(dc, x, y, text, len);
     this->item_rects_[item] = {
       .left = x - 67,
       .top = y,
@@ -240,10 +172,14 @@ public:
   }
 
   void drawItem(int32_t item, int32_t x, int32_t y, int32_t num1) {
-    this->drawItem(item, x, y, 1, num1, 0);
+    char text[100];
+    std::size_t len = snprintf(text, 100, "%d", num1);
+    this->drawItem(item, x, y, text, len);
   }
   void drawItem(int32_t item, int32_t x, int32_t y, int32_t num1, int32_t num2) {
-    this->drawItem(item, x, y, 2, num1, num2);
+    char text[100];
+    std::size_t len = snprintf(text, 100, "%d/%d", num1, num2);
+    this->drawItem(item, x, y, text, len);
   }
 
   int32_t getMessage(int32_t x, int32_t y, bool extended) const {
@@ -281,7 +217,7 @@ public:
       this->drawItem(0, 152, 4, p->attribute(Attribute::FoodStorage));
       this->drawItem(2, 229, 4, p->attribute(Attribute::GoldStorage));
       this->drawItem(3, 306, 4, p->attribute(Attribute::StoneStorage));
-      auto max_pop = std::max(
+      auto max_pop = std::min(
           p->attribute(Attribute::BonusPopulationCap),
           p->attribute(Attribute::CurrentPopulation) + p->attribute(Attribute::PopulationHeadroom)
       );
