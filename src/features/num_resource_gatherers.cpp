@@ -106,10 +106,9 @@ protected:
   Shape flash_icons_{"pocap.shp", 53002};
   std::chrono::system_clock::time_point idle_time_;
   uint32_t idle_interval_ = 500;
-  std::array<bool, 7> highlight_;
+  std::array<bool, 7> item_flash_states_;
   std::array<RECT, 7> item_rects_;
   std::chrono::system_clock::time_point last_flash_time_;
-  bool any_highlight_ = false;
   bool flashing_ = false;
 
 public:
@@ -117,7 +116,7 @@ public:
       : player_(player), font_(font) {
     this->vtable_ = reinterpret_cast<PanelVTable*>(0x637700);
 
-    this->highlight_.fill(false);
+    this->item_flash_states_.fill(false);
     this->item_rects_.fill({0, 0, 0, 0});
 
     if (!this->vtable_->setup(this, draw_area, parent, 0, 0, 0, 0, 0)) {
@@ -141,20 +140,12 @@ public:
   }
 
   void setHighlight(uint8_t attribute_id, bool highlight) {
-    this->highlight_[attribute_id] = highlight;
-    this->any_highlight_ =
-        std::any_of(this->highlight_.begin(), this->highlight_.end(),
-                    [](auto h) { return h; });
+    this->item_flash_states_[attribute_id] = highlight;
     this->setRedraw();
   }
 
   int32_t drawResourceAndGathererItem(int32_t item, int32_t x, int32_t y,
                                       int32_t stockpile, int32_t gatherers) {
-    printf(
-        "[aoc-community-patch] ResourcePanel::drawResourceAndGathererItem(%d, "
-        "x=%d, y=%d, stockpile=%d gatherers=%d)\n",
-        item, x, y, stockpile, gatherers);
-
     constexpr int32_t ItemWidth = 100;
 
     RECT full_area = {.left = x + 8,
@@ -197,6 +188,11 @@ public:
     TextOut(dc, item_area.right - 3, item_area.top + 1, text, len);
     SetTextColor(dc, this->font_color_);
     TextOut(dc, item_area.right - 2, item_area.top, text, len);
+
+    // Could add a semitransparent overlay here if 32 bit colour is enabled.
+    if (this->flashing_ && this->item_flash_states_[index]) {
+      this->flash_icons_.draw(this->draw_area_, item_area.left, item_area.top, 0, nullptr);
+    }
   }
 
   void drawGathererDisplay(RECT item_area, const char* text, std::size_t len) {
@@ -212,10 +208,6 @@ public:
 
   int32_t drawResourceItem(int32_t item, int32_t x, int32_t y, const char* text,
                            std::size_t len) {
-    printf("[aoc-community-patch] ResourcePanel::drawResourceItem(%d, x=%d, "
-           "y=%d, text=%s)\n",
-           item, x, y, text);
-
     RECT item_area = {
         .left = x + 8, .top = y, .right = x + 75, .bottom = y + ItemHeight};
     this->item_rects_[item] = item_area;
@@ -333,7 +325,10 @@ public:
 
     auto now = std::chrono::system_clock::now();
     constexpr auto flash_interval = std::chrono::milliseconds(750);
-    if (this->any_highlight_ &&
+    auto is_anything_highlighted =
+        std::any_of(this->item_flash_states_.begin(), this->item_flash_states_.end(),
+                    [](auto h) { return h; });
+    if (is_anything_highlighted &&
         now - this->last_flash_time_ >= flash_interval) {
       this->flashing_ = !this->flashing_;
       this->last_flash_time_ = now;
