@@ -190,7 +190,7 @@ public:
 
     FillRect(dc, &item_area, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
 
-    this->resource_icons_.draw(this->draw_area_, item_area.left, item_area.top,
+    this->resource_icons_.draw(this->draw_area_, item_area.left, item_area.top + 2,
                                index, nullptr);
 
     SetTextColor(dc, this->shadow_color_);
@@ -271,7 +271,7 @@ public:
       auto prev_align = SetTextAlign(dc, TA_RIGHT);
       SetBkMode(dc, TRANSPARENT);
 
-      constexpr auto y = 8;
+      auto y = 8;
       auto x = 8;
       auto p = this->player_;
 
