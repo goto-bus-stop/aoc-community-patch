@@ -85,8 +85,11 @@ public:
                    int32_t& frame_height);
   bool shapeCheck(int32_t check_x, int32_t check_y, int32_t shape_num,
                   bool mirror, bool outline_valid, bool use_hotspot);
-  bool shapeDraw(DrawArea* draw_area, int32_t x, int32_t y, int32_t frame_id,
-                 char* color_table);
+  bool draw(DrawArea* draw_area, int32_t x, int32_t y, int32_t frame_id,
+                 char* color_table) {
+    auto original = getMethod<bool, Shape*, DrawArea*, int32_t, int32_t, int32_t, char*>(0x4DB740);
+    return original(this, draw_area, x, y, frame_id, color_table);
+  }
   bool shapeMirror(DrawArea* draw_area, int32_t x, int32_t y, int32_t frame_id,
                    char* color_table);
   bool shapeMinMax(int32_t& x_min, int32_t& y_min, int32_t& x_max,

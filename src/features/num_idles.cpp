@@ -1,10 +1,10 @@
 #include "num_idles.h"
 #include "../auto_hook.h"
 #include "../call_conventions.h"
+#include "../game/draw_area.h"
 #include "../game/game.h"
 #include "../game/player.h"
 #include "../game/unit.h"
-#include "../game/draw_area.h"
 #include <charconv>
 
 constexpr uint32_t Black = 0x00'00'00;
@@ -17,10 +17,10 @@ static size_t get_num_idles() {
   size_t count = 0;
   for (const auto unit : units) {
     auto unit_class = unit->type()->unitClass();
-    auto is_civilian = unit_class == UnitClass::Civilian
-      || unit_class == UnitClass::FishingBoat
-      || unit_class == UnitClass::TradeCart
-      || unit_class == UnitClass::TradeBoat;
+    auto is_civilian = unit_class == UnitClass::Civilian ||
+                       unit_class == UnitClass::FishingBoat ||
+                       unit_class == UnitClass::TradeCart ||
+                       unit_class == UnitClass::TradeBoat;
     if (is_civilian) {
       count += unit->isIdle();
     }
@@ -29,7 +29,8 @@ static size_t get_num_idles() {
 }
 
 static bool is_idles_button(void* button) {
-  return button != nullptr && *reinterpret_cast<int32_t*>((size_t)button + 0xF8) == 161;
+  return button != nullptr &&
+         *reinterpret_cast<int32_t*>((size_t)button + 0xF8) == 161;
 }
 
 static void* get_idles_button(void* screen) {
@@ -47,18 +48,21 @@ static void update_idles_button(void* screen) {
   }
 
   auto set_number_display_type = getMethod<void, void*, int32_t>(0x453B70);
-  auto set_number_display_value = getMethod<void, void*, int32_t, int32_t>(0x453B90);
+  auto set_number_display_value =
+      getMethod<void, void*, int32_t, int32_t>(0x453B90);
   auto count = get_num_idles();
   set_number_display_type(button, 2); // only display if nonzero
   set_number_display_value(button, count, 0);
 }
 
-/// Adds "garrison" labelling to `TRIBE_Panel_Button`s, like the idle villager button.
+/// Adds "garrison" labelling to `TRIBE_Panel_Button`s, like the idle villager
+/// button.
 static void THISCALL(fancier_draw, void* button) {
   auto original = getMethod<void, void*>(0x551940);
   original(button);
 
-  auto garrison_display_type = *reinterpret_cast<int32_t*>((size_t)button + 0x2D8);
+  auto garrison_display_type =
+      *reinterpret_cast<int32_t*>((size_t)button + 0x2D8);
   auto garrison_number = *reinterpret_cast<int32_t*>((size_t)button + 0x2DC);
   auto x_offset = *reinterpret_cast<int32_t*>((size_t)button + 0xC);
   auto y_offset = *reinterpret_cast<int32_t*>((size_t)button + 0x10);
@@ -66,13 +70,15 @@ static void THISCALL(fancier_draw, void* button) {
   auto clip_region = *reinterpret_cast<HRGN*>((size_t)button + 0x8C);
   auto font = *reinterpret_cast<HFONT*>((size_t)button + 0x1F4);
 
-  if (garrison_display_type == 1 || (garrison_display_type == 2 && garrison_number > 0)) {
+  if (garrison_display_type == 1 ||
+      (garrison_display_type == 2 && garrison_number > 0)) {
     if (auto context = draw_area->getDeviceContext("tpnl_iv")) {
       SelectClipRgn(context, clip_region);
       auto old_font = SelectObject(context, font);
       SetBkMode(context, TRANSPARENT);
       char label[10];
-      auto label_end = std::to_chars(label, label + sizeof(label), garrison_number);
+      auto label_end =
+          std::to_chars(label, label + sizeof(label), garrison_number);
       auto c = label_end.ptr - label;
       SetTextColor(context, Black);
       TextOutA(context, x_offset + 2, y_offset + 1, label, c);
