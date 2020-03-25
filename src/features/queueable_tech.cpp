@@ -144,7 +144,7 @@ void QueueableTech::install() {
   button_hook_.install((void*)0x528483, (void*)configure_button);
   available_hook_[0].install((void*)0x527D37, (void*)get_available_units);
   available_hook_[1].install((void*)0x528449, (void*)get_available_units);
-  lang_hook_[0].install((void*)0x44FEF0, (void*)get_string);
+  /* lang_hook_[0].install((void*)0x44FEF0, (void*)get_string); */
   /* lang_hook_[1].install((void*)0x4401CD, (void*)get_string_2); */
 
   // Change explicit `if (HideInEditor == 1)` check to `if (HideInEditor >= 1)`,
