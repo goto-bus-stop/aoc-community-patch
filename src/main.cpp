@@ -13,9 +13,9 @@
 #include <windows.h>
 
 // Override new operator with game new operator.
-void* operator new(unsigned int size) {
+void* operator new(std::size_t size) {
   // Call game new
-  return ((void* (*)(unsigned int))0x6137B0)(size);
+  return ((void* (*)(std::size_t))0x6137B0)(size);
 }
 
 // Override delete operator with game delete operator.
@@ -25,9 +25,9 @@ void operator delete(void *ptr) noexcept {
 }
 
 // Override new operator with game new operator.
-void* operator new[](unsigned int size) {
+void* operator new[](std::size_t size) {
   // Call game new
-  return ((void* (*)(unsigned int))0x6137B0)(size);
+  return ((void* (*)(std::size_t))0x6137B0)(size);
 }
 
 // Override delete operator with game delete operator.
