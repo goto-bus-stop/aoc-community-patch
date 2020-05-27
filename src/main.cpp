@@ -11,6 +11,7 @@
 #include "fixes/scenedit_minimap_position.h"
 #include "fixes/scenedit_pierce_armor.h"
 #include "game/player.h"
+#include <cstdio>
 #include <mmmod.h>
 #include <windows.h>
 

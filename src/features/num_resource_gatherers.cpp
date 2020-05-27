@@ -12,6 +12,7 @@
 #include <charconv>
 #include <chrono>
 #include <cstdint>
+#include <cstdio>
 #include <wingdi.h>
 
 template <const Attribute Resource> static int32_t count_gatherers() {
