@@ -145,6 +145,7 @@ public:
     this->setRedraw();
   }
 
+  /// Return the width of the item.
   int32_t drawResourceAndGathererItem(int32_t item, int32_t x, int32_t y,
                                       int32_t stockpile, int32_t gatherers) {
     constexpr int32_t ItemWidth = 100;
@@ -182,8 +183,8 @@ public:
 
     FillRect(dc, &item_area, static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
 
-    this->resource_icons_.draw(this->draw_area_, item_area.left, item_area.top + 2,
-                               index, nullptr);
+    this->resource_icons_.draw(this->draw_area_, item_area.left,
+                               item_area.top + 2, index, nullptr);
 
     SetTextColor(dc, this->shadow_color_);
     TextOut(dc, item_area.right - 3, item_area.top + 1, text, len);
@@ -192,7 +193,8 @@ public:
 
     // Could add a semitransparent overlay here if 32 bit colour is enabled.
     if (this->flashing_ && this->item_flash_states_[index]) {
-      this->flash_icons_.draw(this->draw_area_, item_area.left, item_area.top, 0, nullptr);
+      this->flash_icons_.draw(this->draw_area_, item_area.left, item_area.top,
+                              0, nullptr);
     }
   }
 
@@ -268,46 +270,25 @@ public:
       auto x = 8;
       auto p = this->player_;
 
-      enum class DisplayType {
-        ResourceAndGatherer,
-        Resource,
-      };
-
+      auto index = 0;
+      x += this->drawResourceAndGathererItem(
+          index++, x, y, p->attribute(Attribute::WoodStorage),
+          count_gatherers<Attribute::WoodStorage>());
+      x += this->drawResourceAndGathererItem(
+          index++, x, y, p->attribute(Attribute::FoodStorage),
+          count_gatherers<Attribute::FoodStorage>());
+      x += this->drawResourceAndGathererItem(
+          index++, x, y, p->attribute(Attribute::GoldStorage),
+          count_gatherers<Attribute::GoldStorage>());
+      x += this->drawResourceAndGathererItem(
+          index++, x, y, p->attribute(Attribute::StoneStorage),
+          count_gatherers<Attribute::StoneStorage>());
       auto max_pop = std::min(p->attribute(Attribute::BonusPopulationCap),
                               p->attribute(Attribute::CurrentPopulation) +
                                   p->attribute(Attribute::PopulationHeadroom));
-      std::array<std::tuple<DisplayType, int32_t, int32_t>, 6>
-          resource_displays = {{
-              std::make_tuple(DisplayType::ResourceAndGatherer,
-                              p->attribute(Attribute::WoodStorage),
-                              count_gatherers<Attribute::WoodStorage>()),
-              std::make_tuple(DisplayType::ResourceAndGatherer,
-                              p->attribute(Attribute::FoodStorage),
-                              count_gatherers<Attribute::FoodStorage>()),
-              std::make_tuple(DisplayType::ResourceAndGatherer,
-                              p->attribute(Attribute::GoldStorage),
-                              count_gatherers<Attribute::GoldStorage>()),
-              std::make_tuple(DisplayType::ResourceAndGatherer,
-                              p->attribute(Attribute::StoneStorage),
-                              count_gatherers<Attribute::StoneStorage>()),
-              std::make_tuple(DisplayType::Resource,
-                              p->attribute(Attribute::CurrentPopulation),
-                              max_pop),
-              std::make_tuple(DisplayType::Resource, count_idles(), 0),
-          }};
-
-      auto index = 0;
-      for (auto [type, a, b] : resource_displays) {
-        if (type == DisplayType::ResourceAndGatherer) {
-          x += this->drawResourceAndGathererItem(index++, x, y, a, b);
-        } else if (type == DisplayType::Resource) {
-          if (b == 0) {
-            x += this->drawResourceItem(index++, x, y, a);
-          } else {
-            x += this->drawResourceItem(index++, x, y, a, b);
-          }
-        }
-      }
+      x += this->drawResourceItem(
+          index++, x, y, p->attribute(Attribute::CurrentPopulation), max_pop);
+      x += this->drawResourceItem(index++, x, y, count_idles());
 
       SelectObject(dc, prev_hfont);
       SetTextAlign(dc, prev_align);
@@ -327,8 +308,8 @@ public:
     auto now = std::chrono::system_clock::now();
     constexpr auto flash_interval = std::chrono::milliseconds(750);
     auto is_anything_highlighted =
-        std::any_of(this->item_flash_states_.begin(), this->item_flash_states_.end(),
-                    [](auto h) { return h; });
+        std::any_of(this->item_flash_states_.begin(),
+                    this->item_flash_states_.end(), [](auto h) { return h; });
     if (is_anything_highlighted &&
         now - this->last_flash_time_ >= flash_interval) {
       this->flashing_ = !this->flashing_;
