@@ -18,3 +18,22 @@ Additionally, a "queueable tech" flag can be set to enable the following behavio
 - Bypass the population cap, if a research is at the start of a building's production queue while the player has more units than the population limit for the game;
 - Prevent showing the Gather Point button if all the units in a building are dummy units for queueable techs.
 The "queueable tech" flag is the second bit in the "Hide In Editor" flag. Set the "Hide In Editor" value to 3 in the Advanced Genie Editor for all queueable tech units to opt in to these behaviours.
+
+## New Resource Panel
+The new resource panel implementation shows the number of gatherers for each resource type, and the number of idle villagers. To use the new panel, mod authors must:
+- Modify the UI frames for each civilization to remove the prerendered resource panel "holes"
+- Provide resource icons in a custom SLP file with ID **50760**.
+
+  Each icon should be its own SLP frame. They should be, in order:
+  0. Wood
+  1. Food
+  2. Gold
+  3. Stone
+  4. Population
+  5. Idle Villagers
+
+Then, enable it in the config file:
+```ini
+[resourcepanel]
+enabled = 1
+```
