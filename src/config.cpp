@@ -11,8 +11,6 @@ Config config;
 Config* Config::getInstance() { return &config; }
 
 int32_t Config::onIniKey(const char* section, const char* key, const char* value) {
-  printf("Config::onIniKey(%s, %s, %s)\n", section, key, value);
-
   if (stricmp(section, "behavior") == 0) {
     if (stricmp(key, "selectionsize") == 0) {
       std::from_chars(value, value + strlen(value), this->max_selection_size);
@@ -31,7 +29,6 @@ static int32_t handler(void* user, const char* section, const char* key, const c
 }
 
 void Config::load(const char* filename) {
-  printf("Config::load(%s)\n", filename);
   auto result = ini_parse(filename, handler, this);
   if (result != 0) {
     snprintf(load_error_buffer, sizeof(load_error_buffer), "Failed to parse '%s'. Please report this to the mod author.", filename);

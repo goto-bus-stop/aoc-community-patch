@@ -21,6 +21,32 @@ inline auto getMethod(size_t address) {
 #endif
 }
 
+template <typename ReturnType, typename ThisArg, typename... Args>
+inline auto getStdcall(size_t address) {
+#ifdef _MSC_VER
+  ReturnType (__stdcall * fn)(ThisArg, Args...) = nullptr;
+#else
+  // Simply doing `auto fn = reinterpret_cast<>(address)` loses the __thiscall
+  // declaration, so we have to trick GCC into accepting it.
+  ReturnType __stdcall (*fn)(ThisArg, Args...) = nullptr;
+#endif
+  fn = reinterpret_cast<decltype(fn)>(address);
+  return fn;
+}
+
+template <typename ReturnType, typename ThisArg, typename... Args>
+inline auto getCdecl(size_t address) {
+#ifdef _MSC_VER
+  ReturnType (__cdecl * fn)(ThisArg, Args...) = nullptr;
+#else
+  // Simply doing `auto fn = reinterpret_cast<>(address)` loses the __thiscall
+  // declaration, so we have to trick GCC into accepting it.
+  ReturnType __cdecl (*fn)(ThisArg, Args...) = nullptr;
+#endif
+  fn = reinterpret_cast<decltype(fn)>(address);
+  return fn;
+}
+
 class AutoHook {
 protected:
   void* ptr_ = nullptr;
