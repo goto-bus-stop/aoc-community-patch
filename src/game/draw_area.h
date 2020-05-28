@@ -98,5 +98,9 @@ class DrawArea {
 public:
   HDC getDeviceContext(const char* name);
   void releaseDeviceContext(const char* name);
+  void setClipRect(RECT* clip_rect);
+  void clear(RECT* rect, uint8_t color);
+
+  HDC deviceContext() const { return this->_gdiContext; }
 };
 

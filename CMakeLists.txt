@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_SYSTEM_NAME Windows)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if (UNIX)
@@ -32,17 +32,21 @@ add_library(community-patch SHARED)
 
 target_sources(community-patch
   PRIVATE src/main.cpp
+          src/config.cpp
+          src/ini.c
           src/auto_hook.cpp
           src/features/attribute_storage_mode.cpp
           src/features/brb.cpp
           src/features/hill_bonus.cpp
           src/features/mercenaries.cpp
           src/features/num_idles.cpp
+          src/features/num_resource_gatherers.cpp
           src/features/queueable_tech.cpp
           src/features/scx_mod_identifier.cpp
           src/fixes/keystate.cpp
           src/fixes/scenedit_minimap_position.cpp
           src/fixes/scenedit_pierce_armor.cpp
+          src/game/panel.cpp
           src/game/player.cpp
           src/game/draw_area.cpp
 )

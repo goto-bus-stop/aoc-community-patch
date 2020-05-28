@@ -1,14 +1,17 @@
+#include "config.h"
 #include "features/attribute_storage_mode.h"
 #include "features/brb.h"
 #include "features/hill_bonus.h"
 #include "features/mercenaries.h"
 #include "features/num_idles.h"
+#include "features/num_resource_gatherers.h"
 #include "features/queueable_tech.h"
 #include "features/scx_mod_identifier.h"
 #include "fixes/keystate.h"
 #include "fixes/scenedit_minimap_position.h"
 #include "fixes/scenedit_pierce_armor.h"
 #include "game/player.h"
+#include <cstdio>
 #include <mmmod.h>
 #include <windows.h>
 
@@ -42,6 +45,15 @@ extern "C" __declspec(dllexport) void mmm_load(mmm_mod_info* info) {
 }
 
 extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
+  auto base_dir = info->meta->mod_base_dir;
+  char config_file[260];
+  if (base_dir == nullptr) {
+    strcpy(config_file, "config.ini");
+  } else {
+    sprintf(config_file, "%sconfig.ini", base_dir);
+  }
+  Config::getInstance()->load(config_file);
+
   // Support
   Player::install();
 
@@ -57,9 +69,17 @@ extern "C" __declspec(dllexport) void mmm_before_setup(mmm_mod_info* info) {
   Mercenaries::install();
   SCXModIdentifier::install();
   QueueableTech::install();
-  NumIdles::install();
+  if (Config::getInstance()->use_new_resource_panel) {
+    NumResourceGatherers::install();
+  } else {
+    NumIdles::install();
+  }
 
   FlushInstructionCache(GetCurrentProcess(), nullptr, 0);
+}
+
+extern "C" __declspec(dllexport) void mmm_after_setup(mmm_mod_info* info) {
+  Config::getInstance()->reportError();
 }
 
 extern "C" __declspec(dllexport) void mmm_unload(mmm_mod_info* info) {}
